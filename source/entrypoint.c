@@ -56,7 +56,8 @@ int main(int argc, char** argv){
 		key.user = username;
 		str2ba(to_add.addr, &(key.addr));
 
-		printf("Added device [%d] belonging to '%s' as a new key to the keystore.\n",choice,username); // TODO: actually add it ...
+		register_key(&key); // Add to store
+		printf("Added device [%d] belonging to '%s' as a new key to the keystore.\n",choice,username);
 		printf(" - New Key ( %s )\n",serialize_key(&key));
 		printf("Exiting.\n");
 		return 0;
@@ -67,13 +68,9 @@ int main(int argc, char** argv){
 		return 0;
 	}
 
-	if(args.scan){
-		printf("Scanning\n");
-		return 0;
-	}
-
 	if(args.list_keys){
-		printf("Printing keys\n");
+		printf("Currently recognized as valid bluetooth keys: \n");
+		list_keys();
 		return 0;
 	}
 
@@ -81,8 +78,7 @@ int main(int argc, char** argv){
 		print_help();
 		return 0;
 	}
-	
-	// should start as a daemon.
+
 	start_daemon();
 
 

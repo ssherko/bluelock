@@ -5,6 +5,11 @@
 #include <time.h>
 #include <bluetooth/bluetooth.h>
 #include <string.h>
+
+/****************************************
+*  FUNCTIONS DEALING WITH KEY_DEVICE_T  *
+*****************************************/
+
 /**
 Returns a pointer to a string representing 
 a device key. See "devlist_handler.h" for the format of the string.
@@ -13,7 +18,8 @@ a device key. See "devlist_handler.h" for the format of the string.
 @return result		char* to the string representation of the device key.
 **/
 char* serialize_key( key_device_t* key ){
-	char* result = (char*)malloc(sizeof(char)*128);
+	char* result = (char*)malloc(sizeof(char)*SERIAL_LEN);
+
 	if(result == NULL){
 		return result; // error.
 	}
@@ -21,10 +27,9 @@ char* serialize_key( key_device_t* key ){
 	char added_time[DATE_LEN];
 	char last_seen[DATE_LEN];
 	struct tm* local_time;
-	
+
 	local_time = localtime(&(key->added));
 	strftime(added_time, sizeof(added_time) , DATE_FORMAT, local_time);
-
 
 	local_time = localtime(&(key->last_seen));
 	strftime(last_seen, sizeof(last_seen) , DATE_FORMAT, local_time);
@@ -109,7 +114,7 @@ key_device_t* parse_key ( char* key_str ){
 
 	i = i + 2; // skip over a comma and a whitespace.
 
-	for(; key_str[i] != ','; i++){
+	for(; key_str[i] != ' '; i++){
 		mac_addr[j] = key_str[i];
 		j++;
 	}
@@ -136,21 +141,117 @@ key_device_t* parse_key ( char* key_str ){
 	return key;
 }
 
+/****************************************
+*   FUNCTIONS DEALING WITH KEY_STORE    *
+*****************************************/
 
-int register_key( key_device_t* key ){
-	int result = -1; //error
+key_store* fetch_keys(){
+	FILE* key_file = fopen(KEY_STORE_PATH, "rb");
+	if(key_file == NULL){
+		return NULL;
+	}
+	key_store* store = NULL;
+	size_t read;
+	char* current_key = (char*)malloc(sizeof(char)*SERIAL_LEN);
+	while((read = fread(current_key,sizeof(char)*SERIAL_LEN,1,key_file)) != 0){
+		key_device_t* key = parse_key(current_key);
+		store = insert_node(store,key);
+		memset(current_key,0,sizeof(current_key));
+	}
+	
+	return store;
+}
 
-	return result;
+void persist_keys(key_store* store){
+	FILE* key_file = fopen(KEY_STORE_PATH, "wb");
+	// TODO: error checking
+
+	key_store* cursor = store;
+	char* current_key;
+	do{
+		current_key = serialize_key(cursor -> key);
+		fwrite(current_key, sizeof(char)*SERIAL_LEN,1, key_file);
+
+	}while( (cursor = cursor ->next ) != NULL);
+
+	fclose(key_file);
+}	
+
+void register_key( key_device_t* key ){
+	key_store* store = fetch_keys();
+	store = insert_node(store,key);
+	persist_keys(store);
 }
 
 
-int unregister_key( key_device_t* key ){
-	int result = -1; //error
+void unregister_key( key_device_t* key ){
 
-	return result;
 }
 
 
 void list_keys(){
+	key_store* store = fetch_keys();
+	key_store* cursor = store;
+	int i = 0;
+	if(cursor == NULL){
+		printf(" - No keys have been added.\n");
+		return;
+	}
+	do{
+		printf(" - [%d] %s\n", i, serialize_key(cursor -> key));
+		i++;
+	}while((cursor = cursor -> next) != NULL);
 
+}
+
+/*****************************************
+* FUNCTIONS DEALING WITH THE LINKED LIST *
+******************************************/
+
+key_store* insert_node(key_store* list, key_device_t* to_insert){
+	key_store* cursor = list;
+
+	key_store* tail = (key_store*)malloc(sizeof(key_store));
+	tail->next = NULL;
+	tail->key = to_insert;
+
+	if(list == NULL){
+		list = tail;
+	}else{
+		while(cursor -> next != NULL){
+			cursor = cursor -> next;
+		}
+
+		cursor -> next = tail;
+	}
+	return list;
+}
+
+void delete_node(key_store* list, int position){
+
+}
+
+int get_list_length(key_store* list){
+	if(list == NULL){
+		return 0;
+	}
+	
+	int length = 1;
+	key_store* cursor = list;
+	while((cursor = cursor -> next) != NULL){
+		length++;
+	}
+
+	return length;
+}
+
+void print_list(key_store* list){
+	if(list == NULL){
+		return; 
+	}
+
+	key_store* cursor = list;
+	do{
+		printf("%s\n",serialize_key(cursor->key));
+	}while((cursor = cursor -> next) != NULL);
 }

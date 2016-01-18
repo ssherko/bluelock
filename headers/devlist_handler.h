@@ -21,12 +21,14 @@
 
 #ifndef DEVLIST_HANDLER_H
 #define DEVLIST_HANDLER_H
-#define KEY_STORE_PATH "../config/key_store"
+#define KEY_STORE_PATH "config/keystore"
 #define DATE_FORMAT "%d/%m/%Y %H:%M:%S"
 #define ID_LEN 20
 #define USR_LEN 20
 #define MAC_LEN 18
 #define DATE_LEN 20
+#define STORE_LEN 10
+#define SERIAL_LEN 128
 
 
 typedef struct {
@@ -36,11 +38,34 @@ typedef struct {
 	char* user;
 	bdaddr_t addr;
 } key_device_t;
-
+/*
+	Functions for dealing with a single key device.
+*/
 char* serialize_key( key_device_t* key ); 	// key_device_t -> str
 key_device_t* parse_key ( char* key_str); 	// str -> key_device_t
-int register_key( key_device_t* key );		// persists a new key
-int unregister_key( key_device_t* key );
+void register_key( key_device_t* key );		// persists a new key
+void unregister_key( key_device_t* key );
+
+
+struct node {
+	key_device_t* key;
+	struct node* next;
+};
+typedef struct node key_store;
+
+/*
+	Functions for manipulating the linked list
+*/
+key_store* insert_node(key_store* store, key_device_t* to_insert);
+void delete_node(key_store* store, int position);
+void print_list(key_store* store);
+int get_list_length(key_store* list);
+
+/*
+	Functions for dealing with the store of key devices.
+*/
 void list_keys();							// prints the full key list
+key_store* fetch_keys();
+void persist_keys(key_store* keys);
 
 #endif 

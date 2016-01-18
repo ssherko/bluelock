@@ -2,7 +2,7 @@ COMP = gcc
 COMP_FLAGS = -Wall
 OUT = bluelock
 RFLAGS? =
-LIBS = bluetooth
+LIBS = -lbluetooth
 SRC_FOLD = source/
 HDR_FOLD = headers/
 
@@ -13,7 +13,7 @@ run: compile
 	@./$(OUT) $(RFLAGS)
 
 compile: 
-	@$(COMP) $(COMP_FLAGS) $(SRC) $(HDR) -o $(OUT) -l$(LIBS)
+	@$(COMP) $(COMP_FLAGS) $(SRC) $(HDR) -o $(OUT) $(LIBS)
 
 clean:
 	@rm $(OUT)
