@@ -43,8 +43,8 @@ typedef struct {
 */
 char* serialize_key( key_device_t* key ); 	// key_device_t -> str
 key_device_t* parse_key ( char* key_str); 	// str -> key_device_t
-void register_key( key_device_t* key );		// persists a new key
-void unregister_key( key_device_t* key );
+int register_key( key_device_t* key );		// persists a new key
+int unregister_key( key_device_t* key );
 
 
 struct node {
@@ -57,7 +57,7 @@ typedef struct node key_store;
 	Functions for manipulating the linked list
 */
 key_store* insert_node(key_store* store, key_device_t* to_insert);
-void delete_node(key_store* store, int position);
+key_store* delete_node(key_store* store, int position);
 void print_list(key_store* store);
 int get_list_length(key_store* list);
 
@@ -67,5 +67,7 @@ int get_list_length(key_store* list);
 void list_keys();							// prints the full key list
 key_store* fetch_keys();
 void persist_keys(key_store* keys);
+int are_equal(key_device_t* key1, key_device_t* key2);
+int check_existence(key_store* store,key_device_t* key);
 
 #endif 

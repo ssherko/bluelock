@@ -11,19 +11,21 @@ void print_help(){
 	printf("If no arguments are provided, 'bluelock' will run as a daemon\n");
 }
 
+void print_header(){
+}
+
 cmd_args parse_cmd(int argc,char** argv){
 	
 	cmd_args args;
 	args.add = FALSE;
 	args.del = FALSE;
-	args.del_val = NULL;
 	args.list_keys = FALSE;
 	args.disp_help = FALSE;
 	args.run_daemon = TRUE;
 
 	int c;
 
-	while((c = getopt(argc, argv, "ad:lh")) != -1){
+	while((c = getopt(argc, argv, "adlh")) != -1){
 		switch(c){
 			case 'a':
 				args.add = TRUE;
@@ -31,7 +33,6 @@ cmd_args parse_cmd(int argc,char** argv){
 
 			case 'd':
 				args.del = TRUE;
-				args.del_val = optarg;
 				break;
 
 			case 'l':

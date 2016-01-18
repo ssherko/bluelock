@@ -66,6 +66,10 @@ its internal representation.
 key_device_t* parse_key ( char* key_str ){
 	key_device_t* key = (key_device_t*)malloc(sizeof(key_device_t));
 
+	if(key == NULL){
+		perror("<parse_key> Error allocating memory: ");
+		exit(3);
+	}
 	char device_id[ID_LEN];
 	int j = 0;
 
@@ -141,18 +145,42 @@ key_device_t* parse_key ( char* key_str ){
 	return key;
 }
 
+int are_equal(key_device_t* key1, key_device_t* key2){
+
+	bdaddr_t addr1 = key1 -> addr;
+	bdaddr_t addr2 = key2 -> addr;
+
+	int i;
+	for(i = 0; i < 6; i++){ // bdaddr_t is uint8_t [6]
+		uint8_t a1,a2;
+		a1 = addr1.b[i];
+		a2 = addr2.b[i];
+		if(a1 != a2){
+			return 0;
+		}
+
+	}
+	return 1;
+}
+
 /****************************************
 *   FUNCTIONS DEALING WITH KEY_STORE    *
 *****************************************/
 
 key_store* fetch_keys(){
 	FILE* key_file = fopen(KEY_STORE_PATH, "rb");
+	
 	if(key_file == NULL){
 		return NULL;
 	}
+	
 	key_store* store = NULL;
 	size_t read;
 	char* current_key = (char*)malloc(sizeof(char)*SERIAL_LEN);
+	if(current_key == NULL){
+		perror("<fetch_keys> Error allocating memory: ");
+		exit(3);
+	}
 	while((read = fread(current_key,sizeof(char)*SERIAL_LEN,1,key_file)) != 0){
 		key_device_t* key = parse_key(current_key);
 		store = insert_node(store,key);
@@ -164,7 +192,10 @@ key_store* fetch_keys(){
 
 void persist_keys(key_store* store){
 	FILE* key_file = fopen(KEY_STORE_PATH, "wb");
-	// TODO: error checking
+	if(key_file == NULL){
+		perror("<persist_keys> Error opening key store: ");
+		exit(5);
+	}
 
 	key_store* cursor = store;
 	char* current_key;
@@ -177,14 +208,50 @@ void persist_keys(key_store* store){
 	fclose(key_file);
 }	
 
-void register_key( key_device_t* key ){
+int check_existence(key_store* store,key_device_t* key){
+	if(store == NULL){
+		return -1;
+	}
+	int pos = 0;
+
+	key_store* cursor = store;
+	do{
+		key_device_t* cursor_key = cursor -> key;
+		if(are_equal(cursor_key,key)){
+			return pos;
+		}
+		pos ++;
+	}while((cursor = cursor -> next) != NULL);
+
+	return -1;
+}
+
+// avoid duplicates
+int register_key( key_device_t* key ){
+	int status = 1; 
 	key_store* store = fetch_keys();
-	store = insert_node(store,key);
-	persist_keys(store);
+	if(check_existence(store,key) < 0){
+		store = insert_node(store,key);
+		persist_keys(store);
+		return status;
+	}
+	// key exists
+	status = 0;
+	return status;
 }
 
 
-void unregister_key( key_device_t* key ){
+int unregister_key( key_device_t* key ){
+
+	key_store* store = fetch_keys();
+	int position = check_existence(store, key);
+
+	if(position < 0){
+		return 0; // Key not found in store.
+	}
+	store = delete_node(store,position);
+	persist_keys(store);
+	return 1; // successful delete
 
 }
 
@@ -227,7 +294,31 @@ key_store* insert_node(key_store* list, key_device_t* to_insert){
 	return list;
 }
 
-void delete_node(key_store* list, int position){
+key_store* delete_node(key_store* store, int position){
+	key_store* cursor = store;
+	if(cursor == NULL){
+		return NULL;
+	}
+	if(position < 0){
+		return store;
+	}
+	int curr_pos = 0;
+	key_store* prev = cursor;
+	while(cursor -> next != NULL && curr_pos < position ){
+		prev = cursor;
+		cursor = cursor -> next;
+		curr_pos ++;
+	}
+
+	if(curr_pos == 0){
+		store = store -> next;
+		return store;
+	}
+
+	prev -> next = cursor -> next;
+	cursor = NULL;
+
+	return store;
 
 }
 

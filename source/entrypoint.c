@@ -12,8 +12,8 @@ int main(int argc, char** argv){
 
 	cmd_args args;
 	args = parse_cmd(argc, argv);
-
-	if(args.add){ // The program has been invoked with the -a option.
+	print_header();
+	if(args.add){ // The program has been invoked with the -a option (ADD A NEW KEY)
 		
 		printf("Scanning for nearby devices. Please wait ... \n");
 		discovered_dev_t* nearby = (discovered_dev_t*)malloc(sizeof(discovered_dev_t)*MAX_DEVICES);
@@ -56,7 +56,13 @@ int main(int argc, char** argv){
 		key.user = username;
 		str2ba(to_add.addr, &(key.addr));
 
-		register_key(&key); // Add to store
+		int status = register_key(&key); // Add to store
+		if(status == 0){
+			printf("Device [%d] with ID(%s) and ADDR(%s) already exists.\n",choice,to_add.name,to_add.addr);
+			printf("Exiting.\n");
+			return 0;
+		}
+
 		printf("Added device [%d] belonging to '%s' as a new key to the keystore.\n",choice,username);
 		printf(" - New Key ( %s )\n",serialize_key(&key));
 		printf("Exiting.\n");
@@ -64,13 +70,55 @@ int main(int argc, char** argv){
 	}
 
 	if(args.del){
-		printf("Delete\n");
+		key_store* store = fetch_keys();
+		int store_len = get_list_length(store);
+
+		printf("Currently recognized as valid bluetooth keys: (%d) \n",store_len);
+		list_keys();
+		if(store_len == 0){
+			printf("No keys to delete. Exiting.\n");
+			return 0;
+		}
+
+		int choice;
+		printf("Please, select the [<id>] of the key to be deleted. Enter '-1' to abort: ");
+		scanf("%d",&choice);
+		if(choice < 0){
+			printf("User aborted. Exiting.\n");
+			free(store);
+			return 0;
+		}
+
+		if(choice >= store_len){
+			printf("Invalid [<id>]. Exiting.\n");
+			free(store);
+			return 0;
+		}
+
+		int curr_pos = 0;
+		key_store* to_delete = store;
+		while(curr_pos < choice){
+			to_delete = to_delete -> next;
+			curr_pos++;
+		}
+		int status = unregister_key(to_delete -> key);
+		if(status == 0){
+			printf("Could not delete device [%d].\n", choice);
+			free(store);
+			return 0;
+		}
+		
+		printf("Deleted device (%s) from the keystore.\n",serialize_key(to_delete->key));
+		free(store);
 		return 0;
 	}
 
 	if(args.list_keys){
+		key_store* store = fetch_keys();
+		int store_len = get_list_length(store);
 		printf("Currently recognized as valid bluetooth keys: \n");
 		list_keys();
+		free(store);
 		return 0;
 	}
 

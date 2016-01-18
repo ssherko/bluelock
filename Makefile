@@ -5,7 +5,8 @@ RFLAGS? =
 LIBS = -lbluetooth
 SRC_FOLD = source/
 HDR_FOLD = headers/
-
+CONF_FOLD = config/
+KEY_STORE = keystore
 SRC = $(wildcard $(SRC_FOLD)*.c)
 HDR = $(wildcard $(HDR_FOLD)*.h)
 
@@ -17,3 +18,4 @@ compile:
 
 clean:
 	@rm $(OUT)
+	@rm $(CONF_FOLD)$(KEY_STORE)

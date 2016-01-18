@@ -19,6 +19,7 @@ typedef struct {
 
 } cmd_args;
 
+void print_header();
 cmd_args parse_cmd(int argc, char** argv);
 void print_help();
 void free_key(key_device_t* key);
