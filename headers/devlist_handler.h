@@ -56,7 +56,7 @@ typedef struct node key_store;
 /*
 	Functions for manipulating the linked list
 */
-key_store* insert_node(key_store* store, key_device_t* to_insert);
+key_store* append_node(key_store* store, key_device_t* to_insert);
 key_store* delete_node(key_store* store, int position);
 void print_list(key_store* store);
 int get_list_length(key_store* list);

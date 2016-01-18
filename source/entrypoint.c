@@ -69,7 +69,7 @@ int main(int argc, char** argv){
 		return 0;
 	}
 
-	if(args.del){
+	if(args.del){ // The program has been invoked with the -d option (DELETE AN EXISTING KEY)
 		key_store* store = fetch_keys();
 		int store_len = get_list_length(store);
 
@@ -113,16 +113,16 @@ int main(int argc, char** argv){
 		return 0;
 	}
 
-	if(args.list_keys){
+	if(args.list_keys){ // The program has been invoked with the -l option (LIST EXISTING KEYS)
 		key_store* store = fetch_keys();
 		int store_len = get_list_length(store);
-		printf("Currently recognized as valid bluetooth keys: \n");
+		printf("Currently recognized as valid bluetooth keys: (%d) \n",store_len);
 		list_keys();
 		free(store);
 		return 0;
 	}
 
-	if(args.disp_help){
+	if(args.disp_help){ // The program has been invoked with the -h option (DISPLAY HELP)
 		print_help();
 		return 0;
 	}

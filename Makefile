@@ -17,5 +17,5 @@ compile:
 	@$(COMP) $(COMP_FLAGS) $(SRC) $(HDR) -o $(OUT) $(LIBS)
 
 clean:
-	@rm $(OUT)
-	@rm $(CONF_FOLD)$(KEY_STORE)
+	@rm $(OUT) -f 
+	@rm $(CONF_FOLD)$(KEY_STORE) -f

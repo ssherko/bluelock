@@ -14,7 +14,7 @@
 Returns a pointer to a string representing 
 a device key. See "devlist_handler.h" for the format of the string.
 
-@param	key 		key_device_t* to the internal representation of the device key to serialize
+@param	key 		key_device_t* to the internal representation of the device key to serialize.
 @return result		char* to the string representation of the device key.
 **/
 char* serialize_key( key_device_t* key ){
@@ -145,6 +145,13 @@ key_device_t* parse_key ( char* key_str ){
 	return key;
 }
 
+/*
+Checks whether two keys are equal based on their MAC addresses.
+
+@param key1 		key_device_t* 
+@param key2			key_device_t*
+@return status		int (1) if equal, 0 otherwise.
+*/
 int are_equal(key_device_t* key1, key_device_t* key2){
 
 	bdaddr_t addr1 = key1 -> addr;
@@ -167,6 +174,13 @@ int are_equal(key_device_t* key1, key_device_t* key2){
 *   FUNCTIONS DEALING WITH KEY_STORE    *
 *****************************************/
 
+/*
+Returns a linked list of type key_store. The list is 
+constructed from the KEYSTORE file.
+
+@param None
+@return store 		key_store* Representation of the list of valid keys.
+*/
 key_store* fetch_keys(){
 	FILE* key_file = fopen(KEY_STORE_PATH, "rb");
 	
@@ -179,21 +193,29 @@ key_store* fetch_keys(){
 	char* current_key = (char*)malloc(sizeof(char)*SERIAL_LEN);
 	if(current_key == NULL){
 		perror("<fetch_keys> Error allocating memory: ");
+		fclose(key_file);
 		exit(3);
 	}
 	while((read = fread(current_key,sizeof(char)*SERIAL_LEN,1,key_file)) != 0){
 		key_device_t* key = parse_key(current_key);
-		store = insert_node(store,key);
+		store = append_node(store,key);
 		memset(current_key,0,sizeof(current_key));
 	}
-	
+	fclose(key_file);
 	return store;
 }
 
+/*
+Writes a linked list of type key_store onto the KEYSTORE file.
+
+@param store 		key_store* Representation of the list of valid keys.
+@return None
+*/
 void persist_keys(key_store* store){
 	FILE* key_file = fopen(KEY_STORE_PATH, "wb");
 	if(key_file == NULL){
 		perror("<persist_keys> Error opening key store: ");
+		fclose(key_file);
 		exit(5);
 	}
 
@@ -208,12 +230,20 @@ void persist_keys(key_store* store){
 	fclose(key_file);
 }	
 
+/*
+Checks whether a key is present in the store (i.e.: is valid).
+See are_equal(...) function.
+
+@param store 		key_store* Representation of the (linked) list of valid keys.
+@param key 			key_device_t* The key to be checked.
+@return pos         int (-1) if not in store, else the position in which it appears in the linked list.
+*/
 int check_existence(key_store* store,key_device_t* key){
 	if(store == NULL){
 		return -1;
 	}
+	
 	int pos = 0;
-
 	key_store* cursor = store;
 	do{
 		key_device_t* cursor_key = cursor -> key;
@@ -226,21 +256,31 @@ int check_existence(key_store* store,key_device_t* key){
 	return -1;
 }
 
-// avoid duplicates
+/*
+Adds (and persists) a new device as a valid bluetooth key.
+It doesn't allow duplicates.
+
+@param key 			key_device_t* The key to be registered.
+@return status 		int (1) if device is registered successfully, 0 otherwise.
+*/
 int register_key( key_device_t* key ){
 	int status = 1; 
 	key_store* store = fetch_keys();
 	if(check_existence(store,key) < 0){
-		store = insert_node(store,key);
+		store = append_node(store,key);
 		persist_keys(store);
 		return status;
 	}
-	// key exists
-	status = 0;
+	status = 0; // key exists
 	return status;
 }
 
+/*
+Removes a key from the keystore (and persists the rest).
 
+@param key 			key_device_t* The key to be removed.
+@return status 		int (1) if deletion was successful, 0 otherwise.
+*/
 int unregister_key( key_device_t* key ){
 
 	key_store* store = fetch_keys();
@@ -255,7 +295,12 @@ int unregister_key( key_device_t* key ){
 
 }
 
+/*
+Prints the keystore to stdout.
 
+@param None
+@return None
+*/
 void list_keys(){
 	key_store* store = fetch_keys();
 	key_store* cursor = store;
@@ -269,13 +314,17 @@ void list_keys(){
 		i++;
 	}while((cursor = cursor -> next) != NULL);
 
+	free(store);
 }
 
 /*****************************************
 * FUNCTIONS DEALING WITH THE LINKED LIST *
 ******************************************/
+/*
+The usual linked list business.
+*/
 
-key_store* insert_node(key_store* list, key_device_t* to_insert){
+key_store* append_node(key_store* list, key_device_t* to_insert){
 	key_store* cursor = list;
 
 	key_store* tail = (key_store*)malloc(sizeof(key_store));
