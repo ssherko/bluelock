@@ -128,6 +128,19 @@ int main(int argc, char** argv){
 	}
 
 	key_store* store = fetch_keys();
+	int store_len = get_list_length(store);
+
+	if(store_len == 0){
+		char choice;
+		printf("No keys have been added to the keystore. Proceeding will cause the screen to be locked shortly.\n");
+		printf("Continue? Y/[n]: ");
+		scanf("%c",&choice);
+		if(choice != 'Y'){
+			printf("Exiting.\n");
+			return 0;
+		}
+	}
+	
 	start_daemon(2,store);
 
 
