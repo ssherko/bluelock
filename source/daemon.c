@@ -9,11 +9,13 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "../headers/daemon.h"
-#include "../headers/util.h"
 #include "../headers/devlist_handler.h"
 #include "../headers/scanner.h"
+#include "../headers/messagebus.h"
+
 
 /*
 Begins scanning for nearby bluetooth devices. If any, it checks the keystore whether 
@@ -28,7 +30,7 @@ void start_daemon(int time_per_scan, key_store* store){
 	state_history history;
 	init_history(&history);
 
-	int unlock_status = 1; // unlocked
+	int unlock_status = 1;
 	int previous_status = 1;
 	while(1){
 		int found = scan_nearby(MAX_DEVICES, time_per_scan, nearby);
@@ -124,10 +126,10 @@ int execute_status(int lock_status, int previous_status){
 	}
 	
 	if(lock_status == 0){
-		printf("Locked\n");
+		bus_send_message("LOCK");
 		
 	}else{
-		printf("Unlocked\n");
+		bus_send_message("UNLOCK");
 	}
 	return lock_status;
 }

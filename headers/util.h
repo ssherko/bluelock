@@ -1,10 +1,10 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include "devlist_handler.h"
 /*
 */
 #ifndef UTIL_H
 #define UTIL_H
+#include <unistd.h>
+#include <stdlib.h>
+#include "devlist_handler.h"
 
 typedef enum { FALSE, TRUE } bool;
 

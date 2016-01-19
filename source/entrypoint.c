@@ -23,7 +23,6 @@ int main(int argc, char** argv){
 			return 0;
 		}
 
-		//list the found devices and prompt the user.
 		printf("Found devices: %d\n", found);
 		int i;
 		for(i = 0; i < found; i++ ){
@@ -56,7 +55,7 @@ int main(int argc, char** argv){
 		key.user = username;
 		str2ba(to_add.addr, &(key.addr));
 
-		int status = register_key(&key); // Add to store
+		int status = register_key(&key);
 		if(status == 0){
 			printf("Device [%d] with ID(%s) and ADDR(%s) already exists.\n",choice,to_add.name,to_add.addr);
 			printf("Exiting.\n");

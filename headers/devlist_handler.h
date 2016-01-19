@@ -1,6 +1,3 @@
-#include <bluetooth/bluetooth.h>
-#include <time.h>
-
 /*
 	"devlist_handler" is responsible for persisting
 	string representations of devices that can unlock the machine.
@@ -29,6 +26,9 @@
 #define DATE_LEN 20
 #define STORE_LEN 10
 #define SERIAL_LEN 128
+
+#include <bluetooth/bluetooth.h>
+#include <time.h>
 
 
 typedef struct {
