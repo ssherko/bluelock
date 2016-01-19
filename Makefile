@@ -1,8 +1,9 @@
 COMP = gcc
 COMP_FLAGS = -Wall
+INC = -I/usr/include/dbus-1.0/ -I/usr/lib/i386-linux-gnu/dbus-1.0/include/
 OUT = bluelock
 RFLAGS? =
-LIBS = -lbluetooth
+LIBS = -lbluetooth -ldbus-1
 SRC_FOLD = source/
 HDR_FOLD = headers/
 CONF_FOLD = config/
@@ -13,8 +14,8 @@ HDR = $(wildcard $(HDR_FOLD)*.h)
 run: compile
 	@./$(OUT) $(RFLAGS)
 
-compile: 
-	@$(COMP) $(COMP_FLAGS) $(SRC) $(HDR) -o $(OUT) $(LIBS)
+compile:
+	@$(COMP) $(COMP_FLAGS) $(INC) $(SRC) $(HDR) -o $(OUT) $(LIBS)
 
 clean:
 	@rm $(OUT) -f 
