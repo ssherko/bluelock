@@ -46,7 +46,6 @@ key_device_t* parse_key ( char* key_str); 	// str -> key_device_t
 int register_key( key_device_t* key );		// persists a new key
 int unregister_key( key_device_t* key );
 
-
 struct node {
 	key_device_t* key;
 	struct node* next;
@@ -69,5 +68,6 @@ key_store* fetch_keys();
 void persist_keys(key_store* keys);
 int are_equal(key_device_t* key1, key_device_t* key2);
 int check_existence(key_store* store,key_device_t* key);
+int update_key(key_store* store, int position); 	// updates the last_seen field.
 
 #endif 

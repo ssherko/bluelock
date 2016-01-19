@@ -8,9 +8,8 @@
 
 #include "../headers/scanner.h"
 
+int scan_nearby(int max_devices, int inquiry_length, discovered_dev_t* nearby){
 
-int scan_nearby(int distance, int max_devices, discovered_dev_t* nearby){
-	
 	int adapter_id = hci_get_route(NULL);
 	if(adapter_id < 0){
 		perror("Error accessing bluetooth device: ");
@@ -26,7 +25,6 @@ int scan_nearby(int distance, int max_devices, discovered_dev_t* nearby){
 
 	// Setting parameters for discovery.
 	int status; 					// -1 if any error, else is set by HCI_INQUIRY to number of devices discovered
-	int inquiry_length = INQU_LEN; 	// inquiry_length * 1.28 seconds
 	long flags = IREQ_CACHE_FLUSH;
 	inquiry_info* inq_inf = NULL; 	// will store data for discovered devices.
 	

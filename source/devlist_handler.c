@@ -296,6 +296,34 @@ int unregister_key( key_device_t* key ){
 }
 
 /*
+Updates the last_seen field of the key_device_t located at 
+the given position in the store. Note that the new keystore (with the updated key)
+is persisted, and that the function assumes the position falls within the linked list's length.
+
+@param key_store* 	store 		The store holding the valid keys.
+@param int 			position 	The position (in the keystore) of the key we want to update.
+@return int 		result 		1 if key successfully updated, 0 otherwise.
+*/
+int update_key(key_store* store, int position){
+	if(store == NULL){
+		return 0; // not updated.
+	}
+
+	int curr_pos = 0;
+	key_store* cursor = store;
+	while(curr_pos < position){
+		cursor = cursor -> next;
+		curr_pos++;
+	}
+
+	key_device_t* to_update = cursor -> key;
+	to_update -> last_seen = time(NULL);
+	persist_keys(store);
+	return 1; // success
+
+}
+
+/*
 Prints the keystore to stdout.
 
 @param None

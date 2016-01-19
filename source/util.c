@@ -52,6 +52,7 @@ cmd_args parse_cmd(int argc,char** argv){
 
 }
 
+
 void free_key(key_device_t* key){
 	
 }

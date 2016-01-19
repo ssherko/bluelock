@@ -17,7 +17,7 @@ int main(int argc, char** argv){
 		
 		printf("Scanning for nearby devices. Please wait ... \n");
 		discovered_dev_t* nearby = (discovered_dev_t*)malloc(sizeof(discovered_dev_t)*MAX_DEVICES);
-		int found = scan_nearby(SCAN_DIST, MAX_DEVICES, nearby);
+		int found = scan_nearby(MAX_DEVICES, INQU_LEN, nearby);
 		if(found < 1){
 			printf("No nearby devices found. Exiting.\n");
 			return 0;
@@ -127,7 +127,8 @@ int main(int argc, char** argv){
 		return 0;
 	}
 
-	start_daemon();
+	key_store* store = fetch_keys();
+	start_daemon(2,store);
 
 
 	return 0;
