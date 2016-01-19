@@ -46,7 +46,7 @@ int scan_nearby(int max_devices, int inquiry_length, discovered_dev_t* nearby){
 
 	for(i = 0; i < nr_nearby; i++){
 		discovered_dev_t nearby_dev;
-		memset(name,0,20);
+		memset(name,0,sizeof(name));
 		bdaddr_t mac_addr = inq_inf[i].bdaddr;
 		ba2str(&mac_addr,nearby_dev.addr);
 		
