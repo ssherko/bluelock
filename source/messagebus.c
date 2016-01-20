@@ -43,13 +43,13 @@ void bus_send_message(char* message){
 
   		
   		dbus_message_iter_init_append(lock_message, &args);
-  		if(!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &param)){ 
-      		perror("<bus_send_message> Error appending arguments to DBUS message: ");
-      		exit(8); // document this too.
+  		if(!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &param)){
+  			perror("<bus_send_message> Error appending arguments to DBUS message: ");
+  			exit(8); // document this too.
    		}
 
    		if(!dbus_connection_send_with_reply (connection, lock_message, &pending, -1)){
-      		perror("<bus_send_message> Error sending DBUS LOCK message: "); 
+   			perror("<bus_send_message> Error sending DBUS LOCK message: "); 
       		exit(9); // and this.
    		}
 
