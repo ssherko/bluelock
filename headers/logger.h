@@ -13,8 +13,8 @@
 */
 #ifndef LOGGER_H
 #define LOGGER_H
-#define LOGS_PATH "../config/logs"
-#define LOG_LEN 128
+#define LOGS_PATH "config/logs"
+#define LOG_LEN 140
 
 #define INFO 0
 #define WARN 1
