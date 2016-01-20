@@ -7,12 +7,14 @@
 #include "../headers/daemon.h"
 #include "../headers/devlist_handler.h"
 #include "../headers/scanner.h"
+#include "../headers/logger.h"
 
 int main(int argc, char** argv){
 
 	cmd_args args;
 	args = parse_cmd(argc, argv);
 	print_header();
+
 	if(args.add){ // The program has been invoked with the -a option (ADD A NEW KEY)
 		
 		printf("Scanning for nearby devices. Please wait ... \n");
@@ -65,6 +67,14 @@ int main(int argc, char** argv){
 		printf("Added device [%d] belonging to '%s' as a new key to the keystore.\n",choice,username);
 		printf(" - New Key ( %s )\n",serialize_key(&key));
 		printf("Exiting.\n");
+
+		char* log_msg = (char*)malloc(sizeof(char)*100);
+		strcpy(log_msg, "Added new key device, belonging to '");
+		strcat(log_msg, username);
+		strcat(log_msg,"'");
+
+		log_event("<main>", log_msg, INFO);
+		free(log_msg);
 		return 0;
 	}
 
@@ -108,6 +118,15 @@ int main(int argc, char** argv){
 		}
 		
 		printf("Deleted device (%s) from the keystore.\n",serialize_key(to_delete->key));
+
+		char* log_msg = (char*)malloc(sizeof(char)*100);
+		strcpy(log_msg, "Deleted device belonging to '");
+		strcat(log_msg, to_delete->key->user);
+		strcat(log_msg,"'");
+
+		log_event("<main>", log_msg, INFO);
+		free(log_msg);
+
 		free(store);
 		return 0;
 	}
@@ -138,8 +157,10 @@ int main(int argc, char** argv){
 			printf("Exiting.\n");
 			return 0;
 		}
+		log_event("<main>", "Attempting to run daemon with no valid keys in the keystore", WARN);
 	}
 	
+	log_event("<main>", "Started running service as a daemon", INFO);
 	start_daemon(2,store);
 
 

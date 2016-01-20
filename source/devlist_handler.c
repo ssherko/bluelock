@@ -6,6 +6,8 @@
 #include <bluetooth/bluetooth.h>
 #include <string.h>
 
+#include "../headers/logger.h"
+
 /****************************************
 *  FUNCTIONS DEALING WITH KEY_DEVICE_T  *
 *****************************************/
@@ -67,7 +69,7 @@ key_device_t* parse_key ( char* key_str ){
 	key_device_t* key = (key_device_t*)malloc(sizeof(key_device_t));
 
 	if(key == NULL){
-		perror("<parse_key> Error allocating memory: ");
+		log_event("<parse_key>", "Error allocating memory", ERRO);
 		exit(3);
 	}
 	char device_id[ID_LEN];
@@ -192,7 +194,7 @@ key_store* fetch_keys(){
 	size_t read;
 	char* current_key = (char*)malloc(sizeof(char)*SERIAL_LEN);
 	if(current_key == NULL){
-		perror("<fetch_keys> Error allocating memory: ");
+		log_event("<fetch_keys>", "Error allocating memory", ERRO);
 		fclose(key_file);
 		exit(3);
 	}
@@ -214,9 +216,15 @@ Writes a linked list of type key_store onto the KEYSTORE file.
 void persist_keys(key_store* store){
 	FILE* key_file = fopen(KEY_STORE_PATH, "wb");
 	if(key_file == NULL){
-		perror("<persist_keys> Error opening key store: ");
+		log_event("<persist_keys>", "Error opening keystore", ERRO);
 		fclose(key_file);
 		exit(5);
+	}
+
+	if(store == NULL){
+		fwrite(store, 0,0 , key_file);
+		fclose(key_file);
+		return;
 	}
 
 	key_store* cursor = store;

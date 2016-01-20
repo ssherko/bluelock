@@ -15,7 +15,7 @@
 #include "../headers/devlist_handler.h"
 #include "../headers/scanner.h"
 #include "../headers/messagebus.h"
-
+#include "../headers/logger.h"
 
 /*
 Begins scanning for nearby bluetooth devices. If any, it checks the keystore whether 
@@ -127,9 +127,12 @@ int execute_status(int lock_status, int previous_status){
 	
 	if(lock_status == 0){
 		bus_send_message("LOCK");
+		log_event("<execute_status>","Locked screen, no valid keys nearby",INFO);
+
 		
 	}else{
 		bus_send_message("UNLOCK");
+		log_event("<execute_status>","Unlocked screen, valid keys nearby",INFO);
 	}
 	return lock_status;
 }
