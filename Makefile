@@ -8,6 +8,7 @@ SRC_FOLD = source/
 HDR_FOLD = headers/
 CONF_FOLD = config/
 KEY_STORE = keystore
+LOGS_PATH = logs
 SRC = $(wildcard $(SRC_FOLD)*.c)
 HDR = $(wildcard $(HDR_FOLD)*.h)
 
@@ -20,3 +21,4 @@ compile:
 clean:
 	@rm $(OUT) -f 
 	@rm $(CONF_FOLD)$(KEY_STORE) -f
+	@rm $(CONF_FOLD)$(LOGS_PATH) -f 
