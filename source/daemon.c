@@ -126,12 +126,12 @@ int execute_status(int lock_status, int previous_status){
 	}
 	
 	if(lock_status == 0){
-		bus_send_message("LOCK");
+		bus_send_message("LOCK"); // log after check.
 		log_event("<execute_status>","Locked screen, no valid keys nearby",INFO);
 
 		
 	}else{
-		bus_send_message("UNLOCK");
+		bus_send_message("UNLOCK"); // same here
 		log_event("<execute_status>","Unlocked screen, valid keys nearby",INFO);
 	}
 	return lock_status;
