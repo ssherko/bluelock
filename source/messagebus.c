@@ -7,60 +7,66 @@
 #include "../headers/logger.h"
 
 void bus_send_message(char* message){
-	DBusError error;
-	DBusConnection* connection;
+  DBusError error;
+  DBusConnection* connection;
   dbus_error_init(&error);
   connection = dbus_bus_get(DBUS_BUS_SESSION, &error);
-   	
-  if (dbus_error_is_set(&error)) {
- 		char* log_msg = (char*)malloc(sizeof(char)*LOG_LEN);
-    strcpy(log_msg, "Error connecting to DBus ");
+
+  if(dbus_error_is_set(&error)){
+    char* log_msg = (char*)malloc(sizeof(char)*LOG_LEN);
+    strcpy(log_msg,"Error connecting to DBus ");
     strcat(log_msg, error.message);
     log_event("<bus_send_message>", log_msg, ERRO);
- 		dbus_error_free(&error);
-	}
+    dbus_error_free(&error);
+  }
 
-	if(connection == NULL){
-		log_event("<bus_send_message>", "Error establishing connection", ERRO);
-		exit(6);
-	}
-  // A connection to DBUS has been established
-	
-  if(strcmp(message,"LOCK") == 0 ){ // lock the screen
-		
-		DBusMessage* lock_message;
-		DBusPendingCall* pending;
-		
-		// method call -> dest=org.gnome.ScreenSaver serial=2 path=/org/gnome/ScreenSaver; interface=org.gnome.ScreenSaver; member=Lock
-		char* destination = "org.gnome.ScreenSaver";
-		char* object = "/org/gnome/ScreenSaver";
-		char* interface = "org.gnome.ScreenSaver";
-		char* method = "Lock";
+  if(connection == NULL){
+    log_event("<bus_send_message>", "Error establishing connection", ERRO);
+    exit(6);
+  }
 
-		lock_message = dbus_message_new_method_call(destination,object,interface,method);
-		if(lock_message == NULL){
-			log_event("<bus_send_message>", "Error setting DBus message", ERRO);
-			exit(7); // TODO document this.
-		}
+ /******************************
+  *   SEND THE "LOCK" MESSAGE  *
+  ******************************/
 
- 		if(!dbus_connection_send_with_reply (connection, lock_message, &pending, -1)){
- 			log_event("<bus_send_message>", "Error sending DBus message (Lock)", ERRO);
-      exit(9); // and this.
- 		}
+  if(strcmp(message,"LOCK") == 0){
+    DBusMessage* lock_message;
+    DBusPendingCall* pending;
 
- 		
- 		if(pending == NULL) { 
+    // method call -> dest=org.gnome.ScreenSaver serial=2 path=/org/gnome/ScreenSaver; interface=org.gnome.ScreenSaver; member=Lock
+    char* destination = "org.gnome.ScreenSaver";
+    char* object = "/org/gnome/ScreenSaver";
+    char* interface = "org.gnome.ScreenSaver";
+    char* method = "Lock";
+
+    lock_message = dbus_message_new_method_call(destination,object,interface,method);
+    if(lock_message == NULL){
+      log_event("<bus_send_message>", "Error setting DBus message", ERRO);
+      exit(7); // TODO: Document exit statuses
+    }
+
+    if(!dbus_connection_send_with_reply(connection, lock_message, &pending, -1)){
+      log_event("<bus_send_message>", "Error sending DBus message (Lock)", ERRO);
+      exit(9);
+    }
+
+    if(pending == NULL){
       log_event("<bus_send_message>", "Pending call set to (NULL)", ERRO);
-      exit(10);// and this .. 
- 		}
- 		
+      exit(10);
+    }
+
     dbus_connection_flush(connection);
     dbus_message_unref(lock_message);
-	}
 
+  }
+
+
+  /*******************************
+  *   SEND THE "UNLOCK" MESSAGE  *
+  ********************************/
 
   if(strcmp(message,"UNLOCK") == 0){
-  	printf("UNLOCK\n");
+    
   }
 
 }
