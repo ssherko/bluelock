@@ -16,6 +16,7 @@
 #include "../headers/scanner.h"
 #include "../headers/messagebus.h"
 #include "../headers/logger.h"
+#include "../headers/util.h"
 
 /*
 Begins scanning for nearby bluetooth devices. If any, it checks the keystore whether 
@@ -30,12 +31,14 @@ void start_daemon(int time_per_scan, key_store* store){
 	state_history history;
 	init_history(&history);
 
-	int unlock_status = 1;
-	int previous_status = 1;
+	bool unlock_status = 1;
+	bool previous_status = 1;
 	while(1){
 		int found = scan_nearby(MAX_DEVICES, time_per_scan, nearby);
 		int i;
-		int status = 0;
+		bool status = FALSE;
+		key_device_t* found_device = NULL;
+
 		for(i = 0; i < found; i++){
 			key_device_t* current = (key_device_t*)malloc(sizeof(key_device_t));
 			discovered_dev_t dev = nearby[i];
@@ -45,13 +48,14 @@ void start_daemon(int time_per_scan, key_store* store){
 			if((pos = check_existence(store,current)) >= 0){
 				status = 1;
 				update_key(store, pos);
+				found_device = fetch_key(store,pos);
 				break;
 			}
 			free(current);
 		}
 		update_history(&history,status);
 		update_lock_status(history,&unlock_status);
-		previous_status = execute_status(unlock_status,previous_status);
+		previous_status = execute_status(unlock_status,previous_status, found_device);
 		
 		if(unlock_status == 1){
 			usleep(2000);
@@ -83,7 +87,7 @@ Updates the state_history struct with one more step.
 @param state_history* 		history 	The current history of finding valid keys nearby.
 @param int 					status 		The new status (0 -> no nearby keys, 1 -> at least 1 nearby key) 		
 */
-void update_history(state_history* history, int status){
+void update_history(state_history* history, bool status){
 	int pos = (history -> last_pos) % HISTORY_LEN;
 	history -> locks[pos] = status;
 	(history->last_pos)++;
@@ -97,7 +101,7 @@ See 'daemon.h' for further details.
 @param int* 				status 		Reference to the lock/unlock status.
 @return None
 */
-void update_lock_status(state_history history, int* status){
+void update_lock_status(state_history history, bool* status){
 	int lock = 0;
 	int i = 0;
 	for(;i < HISTORY_LEN; i++){
@@ -105,34 +109,41 @@ void update_lock_status(state_history history, int* status){
 	}
 
 	if(lock >= 1){ 
-		*status = 1;
+		*status = TRUE;
 	}
 
 	if(lock == 0){
-		*status = 0;
+		*status = FALSE;
 	}
 }
 
 /*
-Issues a command to lock/unlock the screen (TODO ... ) whenever the lock_status toggles.
+Issues a command to lock/unlock the screen whenever the lock_status toggles.
 
 @param int 		lock_status 		The current lock status
 @param int 		previous_status		The previous lock status
 @return int 	lock_status 		The new lock status.
 */
-int execute_status(int lock_status, int previous_status){
+bool execute_status(bool lock_status, bool previous_status, key_device_t* key){
 	if(lock_status == previous_status){
 		return lock_status;
 	}
 	
-	if(lock_status == 0){
+	if(lock_status == FALSE){
 		bus_send_message("LOCK"); // log after check.
 		log_event("<execute_status>","Locked screen, no valid keys nearby",INFO);
 
 		
 	}else{
 		bus_send_message("UNLOCK"); // same here
-		log_event("<execute_status>","Unlocked screen, valid keys nearby",INFO);
+		char* user = key -> user;
+		char* msg = (char*)malloc(sizeof(char) * (USR_LEN + 50));
+		strcpy(msg,"Unlocked screen, valid key nearby (");
+		strcat(msg,user);
+		strcat(msg,")");
+
+		log_event("<execute_status>",msg,INFO);
+		free(msg);
 	}
 	return lock_status;
 }

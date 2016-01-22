@@ -15,18 +15,19 @@
 
 #define MAX_DEVICES 5 
 #include "devlist_handler.h"
+#include "util.h"
 #define HISTORY_LEN 3
 
 typedef struct{
-	int locks[HISTORY_LEN];
+	bool locks[HISTORY_LEN];
 	int last_pos;
 } state_history;
 
 void start_daemon(int time_per_scan, key_store* store);
 void init_history(state_history* history);
-void update_history(state_history* history, int status );
+void update_history(state_history* history, bool status );
 void print_history(state_history* history);
-void update_lock_status(state_history history, int* status);
-int execute_status(int lock_status, int previous_status);
+void update_lock_status(state_history history, bool* status);
+bool execute_status(bool lock_status, bool previous_status, key_device_t* key);
 
 #endif

@@ -29,7 +29,7 @@
 
 #include <bluetooth/bluetooth.h>
 #include <time.h>
-
+#include "util.h"
 
 typedef struct {
 	char* device_id;
@@ -38,19 +38,22 @@ typedef struct {
 	char* user;
 	bdaddr_t addr;
 } key_device_t;
-/*
-	Functions for dealing with a single key device.
-*/
-char* serialize_key( key_device_t* key ); 	// key_device_t -> str
-key_device_t* parse_key ( char* key_str); 	// str -> key_device_t
-int register_key( key_device_t* key );		// persists a new key
-int unregister_key( key_device_t* key );
 
 struct node {
 	key_device_t* key;
 	struct node* next;
 };
 typedef struct node key_store;
+
+/*
+	Functions for dealing with a single key device.
+*/
+char* serialize_key( key_device_t* key ); 	// key_device_t -> str
+key_device_t* parse_key ( char* key_str); 	// str -> key_device_t
+bool register_key( key_device_t* key );		// persists a new key
+bool unregister_key( key_device_t* key );
+key_device_t* fetch_key( key_store* store, int position);
+
 
 /*
 	Functions for manipulating the linked list
@@ -66,8 +69,8 @@ int get_list_length(key_store* list);
 void list_keys();							// prints the full key list
 key_store* fetch_keys();
 void persist_keys(key_store* keys);
-int are_equal(key_device_t* key1, key_device_t* key2);
+bool are_equal(key_device_t* key1, key_device_t* key2);
 int check_existence(key_store* store,key_device_t* key);
-int update_key(key_store* store, int position); 	// updates the last_seen field.
+bool update_key(key_store* store, int position); 	// updates the last_seen field.
 
 #endif 

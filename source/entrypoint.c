@@ -85,7 +85,7 @@ int main(int argc, char** argv){
 		printf("Currently recognized as valid bluetooth keys: (%d) \n",store_len);
 		list_keys();
 		if(store_len == 0){
-			printf("No keys to delete. Exiting.\n");
+			printf("No keys to delete.\nExiting.\n");
 			return 0;
 		}
 
@@ -150,7 +150,7 @@ int main(int argc, char** argv){
 
 	if(store_len == 0){
 		char choice;
-		printf("No keys have been added to the keystore. Proceeding will cause the screen to be locked shortly.\n");
+		printf("No keys have been added to the keystore. Proceeding will cause the screen to be locked.\n");
 		printf("Continue? Y/[n]: ");
 		scanf("%c",&choice);
 		if(choice != 'Y'){

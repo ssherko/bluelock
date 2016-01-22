@@ -4,7 +4,6 @@
 #define UTIL_H
 #include <unistd.h>
 #include <stdlib.h>
-#include "devlist_handler.h"
 
 typedef enum { FALSE, TRUE } bool;
 
@@ -19,9 +18,13 @@ typedef struct {
 
 } cmd_args;
 
+typedef struct {
+	int sth;
+}global_vars;
+
 void print_header();
 cmd_args parse_cmd(int argc, char** argv);
 void print_help();
-void free_key(key_device_t* key);
+global_vars fetch_global_vars();
 
 #endif

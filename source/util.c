@@ -52,7 +52,7 @@ cmd_args parse_cmd(int argc,char** argv){
 
 }
 
-
-void free_key(key_device_t* key){
-	
+global_vars fetch_global_vars(){
+	global_vars gv;
+	return gv;
 }

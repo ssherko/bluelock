@@ -154,7 +154,7 @@ Checks whether two keys are equal based on their MAC addresses.
 @param key2			key_device_t*
 @return status		int (1) if equal, 0 otherwise.
 */
-int are_equal(key_device_t* key1, key_device_t* key2){
+bool are_equal(key_device_t* key1, key_device_t* key2){
 
 	bdaddr_t addr1 = key1 -> addr;
 	bdaddr_t addr2 = key2 -> addr;
@@ -165,11 +165,11 @@ int are_equal(key_device_t* key1, key_device_t* key2){
 		a1 = addr1.b[i];
 		a2 = addr2.b[i];
 		if(a1 != a2){
-			return 0;
+			return FALSE;
 		}
 
 	}
-	return 1;
+	return TRUE;
 }
 
 /****************************************
@@ -271,16 +271,15 @@ It doesn't allow duplicates.
 @param key 			key_device_t* The key to be registered.
 @return status 		int (1) if device is registered successfully, 0 otherwise.
 */
-int register_key( key_device_t* key ){
-	int status = 1; 
+bool register_key( key_device_t* key ){
+
 	key_store* store = fetch_keys();
 	if(check_existence(store,key) < 0){
 		store = append_node(store,key);
 		persist_keys(store);
-		return status;
+		return TRUE;
 	}
-	status = 0; // key exists
-	return status;
+	return FALSE;
 }
 
 /*
@@ -289,17 +288,17 @@ Removes a key from the keystore (and persists the rest).
 @param key 			key_device_t* The key to be removed.
 @return status 		int (1) if deletion was successful, 0 otherwise.
 */
-int unregister_key( key_device_t* key ){
+bool unregister_key( key_device_t* key ){
 
 	key_store* store = fetch_keys();
 	int position = check_existence(store, key);
 
 	if(position < 0){
-		return 0; // Key not found in store.
+		return FALSE; // Key not found in store.
 	}
 	store = delete_node(store,position);
 	persist_keys(store);
-	return 1; // successful delete
+	return TRUE; // successful delete
 
 }
 
@@ -312,9 +311,17 @@ is persisted, and that the function assumes the position falls within the linked
 @param int 			position 	The position (in the keystore) of the key we want to update.
 @return int 		result 		1 if key successfully updated, 0 otherwise.
 */
-int update_key(key_store* store, int position){
+bool update_key(key_store* store, int position){
+	key_device_t* to_update = fetch_key(store,position);
+	to_update -> last_seen = time(NULL);
+	persist_keys(store);
+	return TRUE; // success
+
+}
+
+key_device_t* fetch_key(key_store* store, int position){
 	if(store == NULL){
-		return 0; // not updated.
+		return NULL;
 	}
 
 	int curr_pos = 0;
@@ -324,10 +331,8 @@ int update_key(key_store* store, int position){
 		curr_pos++;
 	}
 
-	key_device_t* to_update = cursor -> key;
-	to_update -> last_seen = time(NULL);
-	persist_keys(store);
-	return 1; // success
+	key_device_t* to_return = cursor -> key;
+	return to_return;
 
 }
 
