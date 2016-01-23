@@ -1,0 +1,23 @@
+OBJ = $(wildcard src/*.o)
+
+package:
+	aclocal; automake --add-missing; autoconf;
+
+clean:
+	@rm autom4te.cache -rf
+	@rm src/.deps -rf
+	@rm src/Makefile -f 
+	@rm src/Makefile.in -f
+	@rm Makefile -f 
+	@rm Makefile.in -f
+	@rm aclocal.m4 -f 
+	@rm config.log -f 
+	@rm config.status -f
+	@rm configure -f
+	@rm depcomp -f 
+	@rm install-sh -f
+	@rm missing -f
+	@rm $(OBJ) -f
+	@rm src/bluelock
+
+

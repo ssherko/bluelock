@@ -13,7 +13,7 @@
 */
 #ifndef LOGGER_H
 #define LOGGER_H
-#define LOGS_PATH "~/.bluelock/logs"
+#define LOGS_PATH "/bluelock/logs"
 #define LOG_LEN 140
 
 #define INFO 0
