@@ -1,9 +1,17 @@
 OBJ = $(wildcard src/*.o)
 
 package:
-	aclocal; automake --add-missing; autoconf;
+	@echo "Generating autotool scripts..."
+	@aclocal; automake --add-missing; autoconf;
+
+before_dist: clean package
+	@echo "Cleaning directories before distribution"
+	@rm autom4te.cache -rf
+	@rm config.log -f
+	@rm config.status -f
 
 clean:
+	@echo "Cleaning directories"
 	@rm autom4te.cache -rf
 	@rm src/.deps -rf
 	@rm src/Makefile -f 
@@ -18,6 +26,10 @@ clean:
 	@rm install-sh -f
 	@rm missing -f
 	@rm $(OBJ) -f
-	@rm src/bluelock
+	@rm src/bluelock -f
+
+all: before_dist
+	@echo "Configuring and running make..."
+	./configure && make
 
 

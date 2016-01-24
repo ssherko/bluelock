@@ -9,21 +9,21 @@
 #include "scanner.h"
 #include "logger.h"
 
+
 int main(int argc, char** argv){
 
 	cmd_args args;
-	global_vars vars;
-
-	args = parse_cmd(argc, argv);
-	vars = fetch_global_vars();
+	DATA_PATH = check_persistent_data(); // defined in entrypoint.h
 	
+	fetch_settings(DATA_PATH);
+	args = parse_cmd(argc, argv);
 	print_header();
 
 	if(args.add){ // The program has been invoked with the -a option (ADD A NEW KEY)
 		
 		printf("Scanning for nearby devices. Please wait ... \n");
-		discovered_dev_t* nearby = (discovered_dev_t*)malloc(sizeof(discovered_dev_t)*MAX_DEVICES);
-		int found = scan_nearby(MAX_DEVICES, INQU_LEN, nearby);
+		discovered_dev_t* nearby = (discovered_dev_t*)malloc(sizeof(discovered_dev_t)*NR_MAX_DISCOVERED_DEVICES);
+		int found = scan_nearby(NR_MAX_DISCOVERED_DEVICES, INQUIRY_TIME, nearby);
 		if(found < 1){
 			printf("No nearby devices found. Exiting.\n");
 			return 0;
@@ -144,6 +144,69 @@ int main(int argc, char** argv){
 		return 0;
 	}
 
+	if(args.list_params){ // The program has been invoked with the -s option (LIST PARAMETERS)
+		list_params();
+		printf("Exiting.\n");
+		return 0;
+
+	}
+
+	if(args.edit_param){
+		list_params();
+		int choice;
+		printf("Please, select the [<id>] of the parameter to edit. Enter '-1' to abort:  ");
+		scanf("%d",&choice);
+		if(choice < 0){
+			printf("User aborted. Exiting.\n");
+			return 0;
+		}
+
+		if(choice > 3){
+			printf("Invalid [<id>]. Exiting.\n");
+			return 0;
+		}
+
+		int new_value;
+
+		switch(choice){
+			case 0:
+				printf("Editing 'NR_MAX_DISCOVERED_DEVICES'. Enter new value: ");
+				scanf("%d",&new_value);
+				NR_MAX_DISCOVERED_DEVICES = new_value;
+				break;
+
+			case 1:
+				printf("Editing 'MAX_HISTORY_LEN'. Enter new value: ");
+				scanf("%d",&new_value);
+				MAX_HISTORY_LEN = new_value;
+				break;
+			
+			case 2:
+				printf("Editing 'INQUIRY_TIME'. Enter new value: ");
+				scanf("%d",&new_value);
+				INQUIRY_TIME = new_value;
+				break;
+			case 3:
+				printf("Editing 'TIME_PER_SCAN'. Enter new value: ");
+				scanf("%d",&new_value);
+				TIME_PER_SCAN = new_value;
+				break;
+		}
+
+		if(validate_value(new_value)){
+			persist_settings(DATA_PATH);
+			printf("Successfully modified daemon parameters to: \n");
+			list_params();
+			printf("Exiting.\n");
+			return 0;
+		}
+
+		printf("The new value should be between 1 and 99999.\n");
+		printf("Daemon parameters not modified.\n");
+		printf("Exiting.\n");
+		return 0;
+	}
+
 	if(args.disp_help){ // The program has been invoked with the -h option (DISPLAY HELP)
 		print_help();
 		return 0;
@@ -153,15 +216,10 @@ int main(int argc, char** argv){
 	int store_len = get_list_length(store);
 
 	if(store_len == 0){
-		char choice;
 		printf("No keys have been added to the keystore. Proceeding will cause the screen to be locked.\n");
-		printf("Continue? Y/[n]: ");
-		scanf("%c",&choice);
-		if(choice != 'Y'){
-			printf("Exiting.\n");
-			return 0;
-		}
-		log_event("<main>", "Attempting to run daemon with no valid keys in the keystore", WARN);
+		printf("To add keys, invoke the program with the -a option (-h to list help).\n");
+		printf("Exiting.\n");
+		return 0;
 	}
 	
 	log_event("<main>", "Started running service as a daemon", INFO);

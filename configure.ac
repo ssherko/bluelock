@@ -23,7 +23,7 @@ AC_CHECK_LIB([bluetooth], [hci_get_route],[],[
 ])
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdlib.h string.h sys/socket.h unistd.h dbus/dbus.h bluetooth/bluetooth.h])
+AC_CHECK_HEADERS([stdlib.h string.h sys/socket.h unistd.h bluetooth/bluetooth.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL

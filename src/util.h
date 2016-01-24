@@ -12,23 +12,27 @@ typedef struct {
 	bool del;
 	char* del_val;
 	bool list_keys;
+	bool list_params;
+	bool edit_param;
 	bool disp_help;
 	bool scan;
 	bool run_daemon;
 
 } cmd_args;
 
-typedef struct {
-	/*int MAX_DEVICES;
-	int INQUIRY_LENGTH;
-	int HISTORY_LENGTH;
-	int TIME_PER_SCAN;*/
-}global_vars;
+extern int NR_MAX_DISCOVERED_DEVICES;
+extern int MAX_HISTORY_LEN;
+extern int INQUIRY_TIME;
+extern int TIME_PER_SCAN;
 
 void print_header();
 cmd_args parse_cmd(int argc, char** argv);
 void print_help();
-global_vars fetch_global_vars();
-void persist_global_vars(global_vars* vars);
+char* check_persistent_data();
+void persist_settings(char* data_path);
+int get_parameter_value(char* variable_string);
+void fetch_settings(char* data_path);
+void list_params();
+int validate_value(int value);
 
 #endif
