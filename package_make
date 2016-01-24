@@ -27,6 +27,7 @@ clean:
 	@rm missing -f
 	@rm $(OBJ) -f
 	@rm src/bluelock -f
+	@rm ~/.bluelock -rf
 
 all: before_dist
 	@echo "Configuring and running make..."

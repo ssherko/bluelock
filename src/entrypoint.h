@@ -9,7 +9,7 @@ int INQUIRY_TIME = 2;
 int TIME_PER_SCAN = 2;
 
 char* DATA_PATH;
-char KEY_STORE_PATH[50];
-char LOG_PATH
+char* KEY_STORE_PATH;
+char* LOGS_PATH;
 
 #endif

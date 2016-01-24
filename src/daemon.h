@@ -13,13 +13,16 @@
 #ifndef DAEMON_H
 #define DAEMON_H
 
-#define MAX_DEVICES 5 
 #include "devlist_handler.h"
 #include "util.h"
-#define HISTORY_LEN 3
+
+
+extern int NR_MAX_DISCOVERED_DEVICES;
+extern int MAX_HISTORY_LEN;
+extern int TIME_PER_SCAN;
 
 typedef struct{
-	bool locks[HISTORY_LEN];
+	bool* locks;
 	int last_pos;
 } state_history;
 

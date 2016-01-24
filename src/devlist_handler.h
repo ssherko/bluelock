@@ -18,7 +18,6 @@
 
 #ifndef DEVLIST_HANDLER_H
 #define DEVLIST_HANDLER_H
-#define KEY_STORE_PATH "~/.bluelock/keystore"
 #define DATE_FORMAT "%d/%m/%Y %H:%M:%S"
 #define ID_LEN 20
 #define USR_LEN 20
@@ -30,6 +29,8 @@
 #include <bluetooth/bluetooth.h>
 #include <time.h>
 #include "util.h"
+
+extern char* KEY_STORE_PATH;
 
 typedef struct {
 	char* device_id;

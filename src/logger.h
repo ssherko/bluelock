@@ -13,12 +13,13 @@
 */
 #ifndef LOGGER_H
 #define LOGGER_H
-#define LOGS_PATH "/bluelock/logs"
 #define LOG_LEN 140
 
 #define INFO 0
 #define WARN 1
 #define ERRO 2
+
+extern char* LOGS_PATH;
 
 void log_event(char* function_name, char* message_body,int level);
 #endif

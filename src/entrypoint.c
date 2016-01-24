@@ -12,12 +12,19 @@
 
 int main(int argc, char** argv){
 
+	print_header();
+	
+	// Init stuff.
 	cmd_args args;
 	DATA_PATH = check_persistent_data(); // defined in entrypoint.h
-	
+	KEY_STORE_PATH = (char*)malloc(sizeof(char) * 50);
+	LOGS_PATH = (char*)malloc(sizeof(char) * 50);
+	strcpy(KEY_STORE_PATH,DATA_PATH);
+	strcat(KEY_STORE_PATH, "/keystore");
+	strcpy(LOGS_PATH, DATA_PATH);
+	strcat(LOGS_PATH, "/logs");
 	fetch_settings(DATA_PATH);
 	args = parse_cmd(argc, argv);
-	print_header();
 
 	if(args.add){ // The program has been invoked with the -a option (ADD A NEW KEY)
 		
@@ -25,7 +32,8 @@ int main(int argc, char** argv){
 		discovered_dev_t* nearby = (discovered_dev_t*)malloc(sizeof(discovered_dev_t)*NR_MAX_DISCOVERED_DEVICES);
 		int found = scan_nearby(NR_MAX_DISCOVERED_DEVICES, INQUIRY_TIME, nearby);
 		if(found < 1){
-			printf("No nearby devices found. Exiting.\n");
+			printf("No nearby devices found.\n");
+			printf("Exiting.\n");
 			return 0;
 		}
 
@@ -40,12 +48,14 @@ int main(int argc, char** argv){
 		scanf("%d",&choice);
 
 		if(choice < 0){
-			printf("User aborted. Exiting.\n");
+			printf("User aborted.\n"); 
+			printf("Exiting.\n");
 			return 0;
 		}
 
 		if(choice >= found){
-			printf("Invalid [<id>]. Exiting.\n");
+			printf("Invalid [<id>].\n");
+			printf("Exiting.\n");
 			return 0;
 		}
 
@@ -89,7 +99,8 @@ int main(int argc, char** argv){
 		printf("Currently recognized as valid bluetooth keys: (%d) \n",store_len);
 		list_keys();
 		if(store_len == 0){
-			printf("No keys to delete.\nExiting.\n");
+			printf("No keys to delete.\n");
+			printf("Exiting.\n");
 			return 0;
 		}
 
@@ -97,13 +108,15 @@ int main(int argc, char** argv){
 		printf("Please, select the [<id>] of the key to be deleted. Enter '-1' to abort: ");
 		scanf("%d",&choice);
 		if(choice < 0){
-			printf("User aborted. Exiting.\n");
+			printf("User aborted.\n");
+			printf("Exiting.\n");
 			free(store);
 			return 0;
 		}
 
 		if(choice >= store_len){
-			printf("Invalid [<id>]. Exiting.\n");
+			printf("Invalid [<id>].\n");
+			printf("Exiting.\n");
 			free(store);
 			return 0;
 		}
@@ -151,18 +164,21 @@ int main(int argc, char** argv){
 
 	}
 
-	if(args.edit_param){
+	if(args.edit_param){ // The program has been invoked with the -e option (EDIT PARAMETER)
+		printf("Note: It is advised not to change the default daemon parameters.\n");
 		list_params();
 		int choice;
 		printf("Please, select the [<id>] of the parameter to edit. Enter '-1' to abort:  ");
 		scanf("%d",&choice);
 		if(choice < 0){
-			printf("User aborted. Exiting.\n");
+			printf("User aborted.\n");
+			printf("Exiting.\n");
 			return 0;
 		}
 
 		if(choice > 3){
-			printf("Invalid [<id>]. Exiting.\n");
+			printf("Invalid [<id>].\n");
+			printf("Exiting.\n");
 			return 0;
 		}
 
@@ -216,14 +232,14 @@ int main(int argc, char** argv){
 	int store_len = get_list_length(store);
 
 	if(store_len == 0){
-		printf("No keys have been added to the keystore. Proceeding will cause the screen to be locked.\n");
+		printf("No keys have been added to the keystore. Daemon cannot be run until keys are added.\n");
 		printf("To add keys, invoke the program with the -a option (-h to list help).\n");
 		printf("Exiting.\n");
 		return 0;
 	}
 	
 	log_event("<main>", "Started running service as a daemon", INFO);
-	start_daemon(2,store);
+	start_daemon(INQUIRY_TIME,store);
 
 
 	return 0;

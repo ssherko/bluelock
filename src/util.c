@@ -10,7 +10,7 @@
 void print_help(){
 	printf("Usage: bluelock [-a][-d][-l][-s][-e][-h]\n");
 	printf("\t-a\t\tAdd a new bluetooth key and exit\n");
-	printf("\t-d\t\tDelete the bluetooth key with ID <key_id> and exit\n");
+	printf("\t-d\t\tDelete an existing bluetooth key and exit\n");
 	printf("\t-l\t\tList existing bluetooth keys and exit\n");
 	printf("\t-s\t\tList daemon parameters and exit\n");
 	printf("\t-e\t\tEdit daemon parameters and exit\n");
@@ -96,6 +96,8 @@ char* check_persistent_data(){
 		exit(22);
 	}
 
+	printf("First time run ...\n");
+	printf("Initializing persistent data folder and default settings in '%s'.\n", data_path);
 	persist_settings(data_path);
 	return data_path;
 }
@@ -200,5 +202,5 @@ void list_params(){
 }
 
 int validate_value(int value){
-	return (value < 99999) && (value > 0);
+	return (value <= 99999) && (value > 0);
 }

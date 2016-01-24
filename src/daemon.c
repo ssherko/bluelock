@@ -23,14 +23,14 @@ they're valid or not. Locks/unlocks the screen appropriately.
 @return None
 */
 void start_daemon(int time_per_scan, key_store* store){
-	discovered_dev_t* nearby = (discovered_dev_t*)malloc(sizeof(discovered_dev_t)*MAX_DEVICES);
+	discovered_dev_t* nearby = (discovered_dev_t*)malloc(sizeof(discovered_dev_t)*NR_MAX_DISCOVERED_DEVICES);
 	state_history history;
 	init_history(&history);
 
 	bool unlock_status = 1;
 	bool previous_status = 1;
 	while(1){
-		int found = scan_nearby(MAX_DEVICES, time_per_scan, nearby);
+		int found = scan_nearby(NR_MAX_DISCOVERED_DEVICES, TIME_PER_SCAN, nearby);
 		int i;
 		bool status = FALSE;
 		key_device_t* found_device = NULL;
@@ -71,7 +71,8 @@ that a device has been found in every step.
 */
 void init_history(state_history* history){
 	int i = 0;
-	for(; i < HISTORY_LEN; i++){
+	history -> locks = (bool*)malloc(sizeof(bool)*MAX_HISTORY_LEN);
+	for(; i < MAX_HISTORY_LEN; i++){
 		history -> locks[i] = 1;
 	}
 	history -> last_pos = 0;
@@ -84,7 +85,7 @@ Updates the state_history struct with one more step.
 @param int 					status 		The new status (0 -> no nearby keys, 1 -> at least 1 nearby key) 		
 */
 void update_history(state_history* history, bool status){
-	int pos = (history -> last_pos) % HISTORY_LEN;
+	int pos = (history -> last_pos) % MAX_HISTORY_LEN;
 	history -> locks[pos] = status;
 	(history->last_pos)++;
 }
@@ -100,7 +101,7 @@ See 'daemon.h' for further details.
 void update_lock_status(state_history history, bool* status){
 	int lock = 0;
 	int i = 0;
-	for(;i < HISTORY_LEN; i++){
+	for(;i < MAX_HISTORY_LEN; i++){
 		lock = lock + history.locks[i];
 	}
 
@@ -146,7 +147,7 @@ bool execute_status(bool lock_status, bool previous_status, key_device_t* key){
 
 void print_history(state_history* history){
 	int i;
-	for(i = 0; i< HISTORY_LEN; i++){
+	for(i = 0; i< MAX_HISTORY_LEN; i++){
 		printf("%d, ",history -> locks[i]);
 	}
 	printf("\n");
