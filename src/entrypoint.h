@@ -8,7 +8,6 @@
 
 #ifndef ENTRYPOINT_H
 #define ENTRYPOINT_H
-#include "util.h"
 
 /****************************************
 *       DAEMON RUNTIME PARAMETERS       *

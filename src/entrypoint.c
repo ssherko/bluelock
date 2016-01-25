@@ -25,6 +25,7 @@ int main(int argc, char** argv){
 	strcat(LOGS_PATH, "/logs");
 	fetch_settings(DATA_PATH);
 	args = parse_cmd(argc, argv);
+	int scanf_status = 0; // annoying scanf warning ... 
 
 	if(args.add){ // The program has been invoked with the -a option (ADD A NEW KEY)
 		
@@ -45,7 +46,7 @@ int main(int argc, char** argv){
 		}
 		printf("Please, select the [<id>] to add as a key. Enter '-1' to abort: ");
 		int choice;
-		scanf("%d",&choice);
+		scanf_status = scanf("%d",&choice);
 
 		if(choice < 0){
 			printf("User aborted.\n"); 

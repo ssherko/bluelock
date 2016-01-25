@@ -2,9 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define DBUS_API_SUBJECT_TO_CHANGE
+#include <dbus/dbus.h>
 
 #include "messagebus.h"
 #include "logger.h"
+//#include "util.h"
+
 
 /*
 Sends messages over DBUS.
@@ -47,17 +51,17 @@ void bus_send_message(char* message){
     lock_message = dbus_message_new_method_call(destination,object,interface,method);
     if(lock_message == NULL){
       log_event("<bus_send_message>", "Error setting DBus message", ERRO);
-      exit(7); // TODO: Document exit statuses
+      exit(EXIT_ERR_DBUS_SET_MSG);
     }
 
     if(!dbus_connection_send_with_reply(connection, lock_message, &pending, -1)){
       log_event("<bus_send_message>", "Error sending DBus message (Lock)", ERRO);
-      exit(9);
+      exit(EXIT_ERR_DBUS_SND_MSG);
     }
 
     if(pending == NULL){
       log_event("<bus_send_message>", "Pending call set to (NULL)", ERRO);
-      exit(10);
+      exit(EXIT_ERR_DBUS_PCALL);
     }
 
     dbus_connection_flush(connection);
@@ -80,28 +84,28 @@ void bus_send_message(char* message){
     char* object = "/org/gnome/ScreenSaver";
     char* interface = "org.gnome.ScreenSaver";
     char* method = "SetActive";
-    int set_to = 0;
+    int set_to = 0; //false
 
     unlock_message = dbus_message_new_method_call(destination,object,interface,method);
     if(unlock_message == NULL){
       log_event("<bus_send_message>", "Error setting DBus message", ERRO);
-      exit(7);
+      exit(EXIT_ERR_DBUS_SET_MSG);
     }
 
     dbus_message_iter_init_append(unlock_message,&argument);
     if(!dbus_message_iter_append_basic(&argument, DBUS_TYPE_BOOLEAN, &set_to)){
       log_event("<bus_send_message>", "Error setting argument for DBus message (Unlock)", ERRO);
-      exit(8);
+      exit(EXIT_ERR_DBUS_SET_ARGS);
     }
 
     if(!dbus_connection_send_with_reply(connection, unlock_message, &pending, -1)){
       log_event("<bus_send_message>", "Error sending DBus message (Unlock)", ERRO);
-      exit(9);
+      exit(EXIT_ERR_DBUS_SND_MSG);
     }
 
     if(pending == NULL){
       log_event("<bus_send_message>", "Pending call set to (NULL)", ERRO);
-      exit(10);
+      exit(EXIT_ERR_DBUS_PCALL);
     }
 
     dbus_connection_flush(connection);

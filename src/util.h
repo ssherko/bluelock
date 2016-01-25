@@ -8,8 +8,19 @@
 
 #ifndef UTIL_H
 #define UTIL_H
-#include <unistd.h>
-#include <stdlib.h>
+
+/****************************************
+*            EXIT STATUSES              *
+*****************************************/
+#define EXIT_ERR_OPEN_BT_DEV 1
+#define EXIT_ERR_OPEN_SOCKET 2
+#define EXIT_ERR_ALLOC_MEM 3
+#define EXIT_ERR_HQI_INQUIRY 4
+#define EXIT_ERR_OPEN_KEYSTORE 5
+// 6 - 10 are DBUS RELATED ERRORS, see "messagebus.h"
+#define EXIT_ERR_OPEN_LOGS 11
+#define EXIT_ERR_OPEN_SETTINGS 12
+#define EXIT_ERR_CREAT_DATAFOLD 13
 
 typedef enum { FALSE, TRUE } bool;
 

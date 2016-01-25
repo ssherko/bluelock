@@ -7,6 +7,7 @@
 
 #include "devlist_handler.h"
 #include "logger.h"
+#include "util.h"
 
 /****************************************
 *  FUNCTIONS DEALING WITH KEY_DEVICE_T  *
@@ -71,7 +72,7 @@ key_device_t* parse_key ( char* key_str ){
 
 	if(key == NULL){
 		log_event("<parse_key>", "Error allocating memory", ERRO);
-		exit(3);
+		exit(EXIT_ERR_ALLOC_MEM);
 	}
 	char device_id[ID_LEN];
 	int j = 0;
@@ -199,7 +200,7 @@ key_store* fetch_keys(){
 	if(current_key == NULL){
 		log_event("<fetch_keys>", "Error allocating memory", ERRO);
 		fclose(key_file);
-		exit(3);
+		exit(EXIT_ERR_ALLOC_MEM);
 	}
 	while((read = fread(current_key,sizeof(char)*SERIAL_LEN,1,key_file)) != 0){
 		key_device_t* key = parse_key(current_key);
@@ -221,10 +222,10 @@ void persist_keys(key_store* store){
 	if(key_file == NULL){
 		log_event("<persist_keys>", "Error opening keystore", ERRO);
 		fclose(key_file);
-		exit(5);
+		exit(EXIT_ERR_OPEN_KEYSTORE);
 	}
 
-	fwrite(store, 0,0 , key_file);
+	fwrite(store, 0,0 , key_file); // reset file
 
 	if(store == NULL){
 		fclose(key_file);

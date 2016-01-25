@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "util.h"
 #include "logger.h"
@@ -75,7 +76,7 @@ char* check_persistent_data(){
 	char* data_path = (char*)malloc(sizeof(char)*50);
 	if(data_path == NULL){
 		perror("<check_persistent_data> Error allocating memory: ");
-		exit(3);
+		exit(EXIT_ERR_ALLOC_MEM);
 	}
 
 	char* home_path = getenv("HOME");
@@ -88,7 +89,7 @@ char* check_persistent_data(){
 		if(errno == EEXIST)
 			return data_path;
 		perror("<check_persistent_data> Error creating data folder: ");
-		exit(22);
+		exit(EXIT_ERR_CREAT_DATAFOLD);
 	}
 
 	printf("First time run ...\n");
@@ -111,7 +112,7 @@ void persist_settings(char* data_path){
 	char* settings_path = (char*)malloc(sizeof(char)*50);
 	if(settings_path == NULL){
 		log_event("<persist_settings>", "Error allocating memory",ERRO);
-		exit(3);
+		exit(EXIT_ERR_ALLOC_MEM);
 	}
 	strcpy(settings_path, data_path);
 	strcat(settings_path, "/settings");
@@ -119,7 +120,7 @@ void persist_settings(char* data_path){
 	FILE* settings_file = fopen(settings_path, "w");
 	if(settings_file == NULL){
 		log_event("<persist_settings>", "Error opening settings file", ERRO);
-		exit(23); // document this
+		exit(EXIT_ERR_OPEN_SETTINGS);
 	}
 	
 	fprintf(settings_file, "%s=%d\n", "NR_MAX_DISCOVERED_DEVICES", NR_MAX_DISCOVERED_DEVICES);
@@ -170,7 +171,7 @@ void fetch_settings(char* data_path){
 	char* settings_path = (char*)malloc(sizeof(char)*50);
 	if(settings_path == NULL){
 		log_event("<fetch_settings>", "Error allocating memory",ERRO);
-		exit(3);
+		exit(EXIT_ERR_ALLOC_MEM);
 	}
 	strcpy(settings_path, data_path);
 	strcat(settings_path, "/settings");
@@ -178,7 +179,7 @@ void fetch_settings(char* data_path){
 	FILE* settings_file = fopen(settings_path, "r");
 	if(settings_file == NULL){
 		log_event("<fetch_settings>", "Error opening settings file", ERRO);
-		exit(23); // document this
+		exit(EXIT_ERR_OPEN_SETTINGS); // document this
 	}
 
 	int c;

@@ -7,6 +7,7 @@
 
 #include "devlist_handler.h"
 #include "logger.h"
+#include "util.h"
 
 /*
 Logs a new event in the log file (under the programs data folder).
@@ -23,7 +24,7 @@ void log_event(char* function_name, char* message_body,int level){
 	
 	if(log_file == NULL){
 		perror("<log_event> couldn't open log file: "); // log_event("log_event", "Couldn't open log file",ERRO);// what could go wrong ?
-		exit(21);
+		exit(EXIT_ERR_OPEN_LOGS);
 	}
 
 	char* event_str = (char*)malloc(sizeof(char)*LOG_LEN);

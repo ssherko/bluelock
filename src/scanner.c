@@ -8,6 +8,7 @@
 
 #include "scanner.h"
 #include "logger.h"
+#include "util.h"
 
 /*
 Scans for nearby bluetooth devices. It looks for a maximum of max_devices to be nearby.
@@ -25,14 +26,14 @@ int scan_nearby(int max_devices, int inquiry_length, discovered_dev_t* nearby){
 	int adapter_id = hci_get_route(NULL);
 	if(adapter_id < 0){
 		log_event("<scan_nearby>", "Error accessing bluetooth device", ERRO);
-		exit(1);
+		exit(EXIT_ERR_OPEN_BT_DEV);
 	}
 
 	int socket = hci_open_dev(adapter_id);
 	
 	if(socket < 0){
 		log_event("<scan_nearby>", "Error opening socket", ERRO);
-		exit(2);
+		exit(EXIT_ERR_OPEN_SOCKET);
 	}
 
 	// Setting parameters for discovery.
@@ -43,13 +44,13 @@ int scan_nearby(int max_devices, int inquiry_length, discovered_dev_t* nearby){
 	inq_inf = (inquiry_info*)malloc(max_devices*sizeof(inquiry_info));
 	if (inq_inf == NULL){
 		log_event("<scan_nearby>", "Error allocating resources for inquiry_info", ERRO);
-		exit(3);
+		exit(EXIT_ERR_ALLOC_MEM);
 	}
 
 	status = hci_inquiry(adapter_id, inquiry_length, max_devices, NULL, &inq_inf,flags );
 	if(status < 0){
 		log_event("<scan_nearby>", "Error hci_inquiry", ERRO);
-		exit(4);
+		exit(EXIT_ERR_HQI_INQUIRY);
 	}
 	
 	int nr_nearby = status;

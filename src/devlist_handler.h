@@ -29,7 +29,6 @@
 #define _XOPEN_SOURCE
 
 #include <bluetooth/bluetooth.h>
-#include <time.h>
 #include "util.h"
 
 extern char* KEY_STORE_PATH;
