@@ -48,6 +48,11 @@ int main(int argc, char** argv){
 		int choice;
 		scanf_status = scanf("%d",&choice);
 
+		if(scanf_status == 0){
+			log_event("<main>", "No user input",WARN);
+			return 0;
+		}
+
 		if(choice < 0){
 			printf("User aborted.\n"); 
 			printf("Exiting.\n");
@@ -62,7 +67,12 @@ int main(int argc, char** argv){
 
 		char username[USR_LEN];
 		printf("Adding device [%d] as a new key. Please, enter the name of the device's user: ",choice);
-		scanf("%s",&username[0]);
+		scanf_status = scanf("%s",&username[0]);
+
+		if(scanf_status == 0){
+			log_event("<main>", "No user input",WARN);
+			return 0;
+		}
 
 		discovered_dev_t to_add = nearby[choice];
 		key_device_t key;
@@ -107,7 +117,13 @@ int main(int argc, char** argv){
 
 		int choice;
 		printf("Please, select the [<id>] of the key to be deleted. Enter '-1' to abort: ");
-		scanf("%d",&choice);
+		scanf_status = scanf("%d",&choice);
+
+		if(scanf_status == 0){
+			log_event("<main>", "No user input",WARN);
+			return 0;
+		}
+		
 		if(choice < 0){
 			printf("User aborted.\n");
 			printf("Exiting.\n");
@@ -170,7 +186,13 @@ int main(int argc, char** argv){
 		list_params();
 		int choice;
 		printf("Please, select the [<id>] of the parameter to edit. Enter '-1' to abort:  ");
-		scanf("%d",&choice);
+		scanf_status = scanf("%d",&choice);
+
+		if(scanf_status == 0){
+			log_event("<main>", "No user input",WARN);
+			return 0;
+		}
+		
 		if(choice < 0){
 			printf("User aborted.\n");
 			printf("Exiting.\n");
@@ -188,28 +210,33 @@ int main(int argc, char** argv){
 		switch(choice){
 			case 0:
 				printf("Editing 'NR_MAX_DISCOVERED_DEVICES'. Enter new value: ");
-				scanf("%d",&new_value);
+				scanf_status = scanf("%d",&new_value);
 				NR_MAX_DISCOVERED_DEVICES = new_value;
 				break;
 
 			case 1:
 				printf("Editing 'MAX_HISTORY_LEN'. Enter new value: ");
-				scanf("%d",&new_value);
+				scanf_status = scanf("%d",&new_value);
 				MAX_HISTORY_LEN = new_value;
 				break;
 			
 			case 2:
 				printf("Editing 'SLEEP_TIME'. Enter new value: ");
-				scanf("%d",&new_value);
+				scanf_status = scanf("%d",&new_value);
 				SLEEP_TIME = new_value;
 				break;
 			case 3:
 				printf("Editing 'TIME_PER_SCAN'. Enter new value: ");
-				scanf("%d",&new_value);
+				scanf_status = scanf("%d",&new_value);
 				TIME_PER_SCAN = new_value;
 				break;
 		}
 
+		if(scanf_status == 0){
+			log_event("<main>", "No user input",WARN);
+			return 0;
+		}
+		
 		if(validate_value(new_value)){
 			persist_settings(DATA_PATH);
 			printf("Successfully modified daemon parameters.\n");
