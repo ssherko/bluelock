@@ -28,13 +28,14 @@ char* serialize_key( key_device_t* key ){
 
 	char added_time[DATE_LEN];
 	char last_seen[DATE_LEN];
-	struct tm* local_time;
+	struct tm* local_time_a;
+	struct tm* local_time_l;
 
-	local_time = localtime(&(key->added));
-	strftime(added_time, sizeof(added_time) , DATE_FORMAT, local_time);
-
-	local_time = localtime(&(key->last_seen));
-	strftime(last_seen, sizeof(last_seen) , DATE_FORMAT, local_time);
+	local_time_a = localtime(&(key->added));
+	strftime(added_time, sizeof(added_time) , DATE_FORMAT, local_time_a);
+	
+	local_time_l = localtime(&(key->last_seen));
+	strftime(last_seen, sizeof(last_seen) , DATE_FORMAT, local_time_l);
 
 	strcpy(result,key->device_id);
 	strcat(result, ": { ");
@@ -130,12 +131,15 @@ key_device_t* parse_key ( char* key_str ){
 	key->device_id = (char*)malloc(sizeof(device_id));
 	strcpy(key->device_id, device_id);
 
-	struct tm local_time;
-	strptime(added_time, DATE_FORMAT, &local_time);
-	key->added = mktime(&local_time);
+	struct tm local_time_a;
+	memset(&local_time_a,0,sizeof(local_time_a));
+	strptime(added_time, DATE_FORMAT, &local_time_a);
+	key->added = mktime(&local_time_a);
 
-	strptime(last_seen, DATE_FORMAT, &local_time);
-	key->last_seen = mktime(&local_time);
+	struct tm local_time_l;
+	memset(&local_time_l,0,sizeof(local_time_l));
+	strptime(last_seen, DATE_FORMAT, &local_time_l);
+	key->last_seen = mktime(&local_time_l);
 
 	key->user = (char*)malloc(sizeof(user));
 	strcpy(key->user,user);
@@ -199,6 +203,7 @@ key_store* fetch_keys(){
 	}
 	while((read = fread(current_key,sizeof(char)*SERIAL_LEN,1,key_file)) != 0){
 		key_device_t* key = parse_key(current_key);
+
 		store = append_node(store,key);
 		memset(current_key,0,sizeof(current_key));
 	}
@@ -219,8 +224,9 @@ void persist_keys(key_store* store){
 		exit(5);
 	}
 
+	fwrite(store, 0,0 , key_file);
+
 	if(store == NULL){
-		fwrite(store, 0,0 , key_file);
 		fclose(key_file);
 		return;
 	}

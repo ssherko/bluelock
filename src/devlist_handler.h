@@ -25,6 +25,8 @@
 #define DATE_LEN 20
 #define STORE_LEN 10
 #define SERIAL_LEN 128
+#define _GNU_SOURCE
+#define _XOPEN_SOURCE
 
 #include <bluetooth/bluetooth.h>
 #include <time.h>
