@@ -40,7 +40,7 @@ int SLEEP_TIME = 1;
 *****************************************/
 // Note: They're set during runtime.
 
-// The path of the folder where the application persists its data
+// The path of the folder where the application persists its data.
 // Should be ~/.bluelock
 char* DATA_PATH;
 

@@ -129,12 +129,12 @@ int main(int argc, char** argv){
 		}
 		int status = unregister_key(to_delete -> key);
 		if(status == 0){
-			printf("Could not delete device [%d].\n", choice);
+			printf("Could not delete key [%d].\n", choice);
 			free(store);
 			return 0;
 		}
 		
-		printf("Deleted device (%s) from the keystore.\n",serialize_key(to_delete->key));
+		printf("Deleted key (%s) from the keystore.\n",serialize_key(to_delete->key));
 
 		char* log_msg = (char*)malloc(sizeof(char)*100);
 		strcpy(log_msg, "Deleted device belonging to '");
