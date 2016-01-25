@@ -12,13 +12,13 @@
 *  FUNCTIONS DEALING WITH KEY_DEVICE_T  *
 *****************************************/
 
-/**
+/*
 Returns a pointer to a string representing 
 a device key. See "devlist_handler.h" for the format of the string.
 
-@param	key 		key_device_t* to the internal representation of the device key to serialize.
-@return result		char* to the string representation of the device key.
-**/
+@param key Reference to the internal representation of the device key to serialize.
+@return result Reference to the string representation of the device key.
+*/
 char* serialize_key( key_device_t* key ){
 	char* result = (char*)malloc(sizeof(char)*SERIAL_LEN);
 
@@ -58,13 +58,13 @@ char* serialize_key( key_device_t* key ){
 	return result;
 } 
 
-/**
+/*
 Parses a string representation of a device key into
 its internal representation.
 
-@param key_str 		char* to the string representation.
-@return key 		key_device_t* to the internal representation.
-**/
+@param key_str Reference to the string representation.
+@return key Reference to the internal representation.
+*/
 key_device_t* parse_key ( char* key_str ){
 	key_device_t* key = (key_device_t*)malloc(sizeof(key_device_t));
 
@@ -150,9 +150,9 @@ key_device_t* parse_key ( char* key_str ){
 /*
 Checks whether two keys are equal based on their MAC addresses.
 
-@param key1 		key_device_t* 
-@param key2			key_device_t*
-@return status		int (1) if equal, 0 otherwise.
+@param key1 The first operand.
+@param key2	The second operand.
+@return status (TRUE) if equal, (FALSE) otherwise.
 */
 bool are_equal(key_device_t* key1, key_device_t* key2){
 
@@ -180,8 +180,7 @@ bool are_equal(key_device_t* key1, key_device_t* key2){
 Returns a linked list of type key_store. The list is 
 constructed from the KEYSTORE file.
 
-@param None
-@return store 		key_store* Representation of the list of valid keys.
+@return store Representation of the list of valid keys.
 */
 key_store* fetch_keys(){
 	FILE* key_file = fopen(KEY_STORE_PATH, "rb");
@@ -210,8 +209,7 @@ key_store* fetch_keys(){
 /*
 Writes a linked list of type key_store onto the KEYSTORE file.
 
-@param store 		key_store* Representation of the list of valid keys.
-@return None
+@param store Representation of the list of valid keys.
 */
 void persist_keys(key_store* store){
 	FILE* key_file = fopen(KEY_STORE_PATH, "wb");
@@ -242,9 +240,9 @@ void persist_keys(key_store* store){
 Checks whether a key is present in the store (i.e.: is valid).
 See are_equal(...) function.
 
-@param store 		key_store* Representation of the (linked) list of valid keys.
-@param key 			key_device_t* The key to be checked.
-@return pos         int (-1) if not in store, else the position in which it appears in the linked list.
+@param store Representation of the (linked) list of valid keys.
+@param key The key to be checked.
+@return pos (-1) if not in store, else the position in which it appears in the linked list.
 */
 int check_existence(key_store* store,key_device_t* key){
 	if(store == NULL){
@@ -268,8 +266,8 @@ int check_existence(key_store* store,key_device_t* key){
 Adds (and persists) a new device as a valid bluetooth key.
 It doesn't allow duplicates.
 
-@param key 			key_device_t* The key to be registered.
-@return status 		int (1) if device is registered successfully, 0 otherwise.
+@param key The key to be registered.
+@return status (TRUE) if device is registered successfully, (FALSE) otherwise.
 */
 bool register_key( key_device_t* key ){
 
@@ -285,8 +283,8 @@ bool register_key( key_device_t* key ){
 /*
 Removes a key from the keystore (and persists the rest).
 
-@param key 			key_device_t* The key to be removed.
-@return status 		int (1) if deletion was successful, 0 otherwise.
+@param key The key to be removed.
+@return status (TRUE) if deletion was successful, (FALSE) otherwise.
 */
 bool unregister_key( key_device_t* key ){
 
@@ -307,9 +305,9 @@ Updates the last_seen field of the key_device_t located at
 the given position in the store. Note that the new keystore (with the updated key)
 is persisted, and that the function assumes the position falls within the linked list's length.
 
-@param key_store* 	store 		The store holding the valid keys.
-@param int 			position 	The position (in the keystore) of the key we want to update.
-@return int 		result 		1 if key successfully updated, 0 otherwise.
+@param store The store holding the valid keys.
+@param position The position (in the keystore) of the key we want to update.
+@return result (TRUE) if key successfully updated, (FALSE) otherwise.
 */
 bool update_key(key_store* store, int position){
 	key_device_t* to_update = fetch_key(store,position);
@@ -319,6 +317,13 @@ bool update_key(key_store* store, int position){
 
 }
 
+/*
+Returns a reference to a key in specified position in the keystore. (i.e.: The i-th valid key)
+Note that it doesn't validate the "position" argument. 
+
+@param store The store holding the valid keys.
+@param position The position of the key in the store.
+*/
 key_device_t* fetch_key(key_store* store, int position){
 	if(store == NULL){
 		return NULL;
@@ -336,12 +341,6 @@ key_device_t* fetch_key(key_store* store, int position){
 
 }
 
-/*
-Prints the keystore to stdout.
-
-@param None
-@return None
-*/
 void list_keys(){
 	key_store* store = fetch_keys();
 	key_store* cursor = store;
@@ -358,13 +357,13 @@ void list_keys(){
 	free(store);
 }
 
+
 /*****************************************
 * FUNCTIONS DEALING WITH THE LINKED LIST *
 ******************************************/
 /*
 The usual linked list business.
 */
-
 key_store* append_node(key_store* list, key_device_t* to_insert){
 	key_store* cursor = list;
 

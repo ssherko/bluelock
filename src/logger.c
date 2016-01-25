@@ -8,6 +8,16 @@
 #include "devlist_handler.h"
 #include "logger.h"
 
+/*
+Logs a new event in the log file (under the programs data folder).
+A log can be in one of the three possible levels (INFO, WARNING, ERROR)
+Setting the level to ERROR causes the string representation of the 'errno'
+to be logged, together with the message body.
+
+@param function_name The function that has issued the log_event call.
+@param message_body The message corresponding to the event
+@param level The level of the event to be logged.
+*/
 void log_event(char* function_name, char* message_body,int level){
 	FILE* log_file = fopen(LOGS_PATH, "a");
 	

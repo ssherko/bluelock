@@ -30,7 +30,7 @@ int main(int argc, char** argv){
 		
 		printf("Scanning for nearby devices. Please wait ... \n");
 		discovered_dev_t* nearby = (discovered_dev_t*)malloc(sizeof(discovered_dev_t)*NR_MAX_DISCOVERED_DEVICES);
-		int found = scan_nearby(NR_MAX_DISCOVERED_DEVICES, INQUIRY_TIME, nearby);
+		int found = scan_nearby(NR_MAX_DISCOVERED_DEVICES, TIME_PER_SCAN, nearby);
 		if(found < 1){
 			printf("No nearby devices found.\n");
 			printf("Exiting.\n");
@@ -198,9 +198,9 @@ int main(int argc, char** argv){
 				break;
 			
 			case 2:
-				printf("Editing 'INQUIRY_TIME'. Enter new value: ");
+				printf("Editing 'SLEEP_TIME'. Enter new value: ");
 				scanf("%d",&new_value);
-				INQUIRY_TIME = new_value;
+				SLEEP_TIME = new_value;
 				break;
 			case 3:
 				printf("Editing 'TIME_PER_SCAN'. Enter new value: ");
@@ -211,7 +211,7 @@ int main(int argc, char** argv){
 
 		if(validate_value(new_value)){
 			persist_settings(DATA_PATH);
-			printf("Successfully modified daemon parameters to: \n");
+			printf("Successfully modified daemon parameters.\n");
 			list_params();
 			printf("Exiting.\n");
 			return 0;
@@ -239,7 +239,7 @@ int main(int argc, char** argv){
 	}
 	
 	log_event("<main>", "Started running service as a daemon", INFO);
-	start_daemon(INQUIRY_TIME,store);
+	start_daemon(TIME_PER_SCAN,store);
 
 
 	return 0;

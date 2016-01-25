@@ -9,6 +9,17 @@
 #include "scanner.h"
 #include "logger.h"
 
+/*
+Scans for nearby bluetooth devices. It looks for a maximum of max_devices to be nearby.
+The timeout for the discovery is set to (1.28*inquiry_length) seconds. Finally,
+a reference to a discovered_dev_t (see scanner.h) array is passed, used to store the 
+results of the scanning.
+
+@param max_devices The number (maximum) of devices that can be discovered.
+@param inquiry_length Time to wait for nearby devices to respond.
+@param nearby Datastructure to hold information about the nearby/discovered devices.
+@return nr_nearby The actual number of devices found nearby.
+*/
 int scan_nearby(int max_devices, int inquiry_length, discovered_dev_t* nearby){
 
 	int adapter_id = hci_get_route(NULL);
@@ -66,8 +77,15 @@ int scan_nearby(int max_devices, int inquiry_length, discovered_dev_t* nearby){
 	close(socket);
 	free(inq_inf);
 	return nr_nearby;
+
 }
 
+/*
+Returns a string representation of a discovered device.
+
+@param dev The device to be represented.
+@return result The string representation.
+*/
 char* disc_dev2str(discovered_dev_t* dev){
 	char* result = (char*)malloc(sizeof(dev->addr) + sizeof(dev->name) + 2);
 	strcpy(result, dev->name);

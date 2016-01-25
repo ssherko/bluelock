@@ -6,6 +6,11 @@
 #include "messagebus.h"
 #include "logger.h"
 
+/*
+Sends messages over DBUS.
+
+@param message The message to send (LOCK/UNLOCK).
+*/
 void bus_send_message(char* message){
   DBusError error;
   DBusConnection* connection;
@@ -80,7 +85,7 @@ void bus_send_message(char* message){
     unlock_message = dbus_message_new_method_call(destination,object,interface,method);
     if(unlock_message == NULL){
       log_event("<bus_send_message>", "Error setting DBus message", ERRO);
-      exit(7); // TODO: Document exit statuses
+      exit(7);
     }
 
     dbus_message_iter_init_append(unlock_message,&argument);

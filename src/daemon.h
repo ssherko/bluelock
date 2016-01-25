@@ -20,6 +20,7 @@
 extern int NR_MAX_DISCOVERED_DEVICES;
 extern int MAX_HISTORY_LEN;
 extern int TIME_PER_SCAN;
+extern int SLEEP_TIME;
 
 typedef struct{
 	bool* locks;

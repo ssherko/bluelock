@@ -4,24 +4,18 @@
 #include <sys/types.h>
 #include <string.h>
 #include <errno.h>
+
 #include "util.h"
 #include "logger.h"
 
-void print_help(){
-	printf("Usage: bluelock [-a][-d][-l][-s][-e][-h]\n");
-	printf("\t-a\t\tAdd a new bluetooth key and exit\n");
-	printf("\t-d\t\tDelete an existing bluetooth key and exit\n");
-	printf("\t-l\t\tList existing bluetooth keys and exit\n");
-	printf("\t-s\t\tList daemon parameters and exit\n");
-	printf("\t-e\t\tEdit daemon parameters and exit\n");
-	printf("\t-h\t\tDisplay this message and exit\n");
-	printf("If no arguments are provided, 'bluelock' will run as a daemon\n");
-}
+/*
+Parses the command line arguments into a struct (defined in 'util.h'),
+which is then used to control the execution flow of the program.
 
-void print_header(){
-	printf("Bluelock 2016 - Use bluetooth devices as keys.\n");
-}
-
+@param argc The number of command line arguments.
+@param argv The command line arguments (a list of strings).
+@return args The actual struct.
+*/
 cmd_args parse_cmd(int argc,char** argv){
 	
 	cmd_args args;
@@ -72,9 +66,10 @@ cmd_args parse_cmd(int argc,char** argv){
 
 
 /*
-Checks whether the path were the data
-should be persisted(~/.bluelock/) exists.
+Checks whether the path were the data should be persisted(~/.bluelock/) exists. 
+It if does, it returns the data path (absolute) else it creates the folder.
 
+@return data_path The path of the folder where program data is to be persisted.
 */
 char* check_persistent_data(){
 	char* data_path = (char*)malloc(sizeof(char)*50);
@@ -99,10 +94,18 @@ char* check_persistent_data(){
 	printf("First time run ...\n");
 	printf("Initializing persistent data folder and default settings in '%s'.\n", data_path);
 	persist_settings(data_path);
+	
 	return data_path;
+
 }
 
-// settings defined in entrypoint.h
+/*
+Persist the daemon runtime parameters/settings into a file named
+'settings' under the data path folder ('~/.bluelock/').
+See 'entrypoint.h' for the settings definition.
+
+@param data_path The path of the data folder.
+*/
 void persist_settings(char* data_path){
 	
 	char* settings_path = (char*)malloc(sizeof(char)*50);
@@ -121,7 +124,7 @@ void persist_settings(char* data_path){
 	
 	fprintf(settings_file, "%s=%d\n", "NR_MAX_DISCOVERED_DEVICES", NR_MAX_DISCOVERED_DEVICES);
 	fprintf(settings_file, "%s=%d\n", "MAX_HISTORY_LEN", MAX_HISTORY_LEN);
-	fprintf(settings_file, "%s=%d\n", "INQUIRY_TIME", INQUIRY_TIME);
+	fprintf(settings_file, "%s=%d\n", "SLEEP_TIME", SLEEP_TIME);
 	fprintf(settings_file, "%s=%d\n", "TIME_PER_SCAN", TIME_PER_SCAN);
 
 	fclose(settings_file);
@@ -129,6 +132,15 @@ void persist_settings(char* data_path){
 
 }
 
+/*
+Retrieves the value from a "<VARIABLE_NAME>=<VARIABLE_VALUE>" string.
+It is expected that <VARIABLE_VALUE> is a string representation of an
+integer. The function parses said representation into an integer and
+returns it.
+
+@param variable_string The string where to get the value from.
+@return value Integer representation of the value.
+*/
 int get_parameter_value(char* variable_string){
 	int i = 0;
 	while(variable_string[i] != '='){
@@ -147,6 +159,13 @@ int get_parameter_value(char* variable_string){
 	return value;
 
 }
+
+/*
+Parses the 'settings' file under the program data folder 
+and sets the corresponding 'global' variables appropriately.
+
+@param data_path The absolute path of the program's data folder.
+*/
 void fetch_settings(char* data_path){
 	char* settings_path = (char*)malloc(sizeof(char)*50);
 	if(settings_path == NULL){
@@ -175,8 +194,8 @@ void fetch_settings(char* data_path){
 				MAX_HISTORY_LEN = value;
 				break;
 
-			case 'I':
-				INQUIRY_TIME = value;
+			case 'S':
+				SLEEP_TIME = value;
 				break;
 
 			case 'T':
@@ -193,14 +212,37 @@ void fetch_settings(char* data_path){
 	free(settings_path);
 }
 
+/*
+Validates the new value that a user is trying to assign to any of the 
+daemon parameters.
+*/
+int validate_value(int value){
+	return (value <= 99999) && (value > 0);
+}
+
+/****************************************
+*              PRINT STUFF              *
+*****************************************/
+
+void print_help(){
+	printf("Usage: bluelock [-a][-d][-l][-s][-e][-h]\n");
+	printf("\t-a\t\tAdd a new bluetooth key and exit\n");
+	printf("\t-d\t\tDelete an existing bluetooth key and exit\n");
+	printf("\t-l\t\tList existing bluetooth keys and exit\n");
+	printf("\t-s\t\tList daemon parameters and exit\n");
+	printf("\t-e\t\tEdit daemon parameters and exit\n");
+	printf("\t-h\t\tDisplay this message and exit\n");
+	printf("If no arguments are provided, 'bluelock' will run as a daemon\n");
+}
+
+void print_header(){
+	printf("Bluelock 2016 - Use bluetooth devices as keys.\n");
+}
+
 void list_params(){
 	printf("Current daemon parameters: \n");
 	printf("\t - [0] NR_MAX_DISCOVERED_DEVICES: %d\n", NR_MAX_DISCOVERED_DEVICES);
 	printf("\t - [1] MAX_HISTORY_LEN: %d\n", MAX_HISTORY_LEN);
-	printf("\t - [2] INQUIRY_TIME: %d\n", INQUIRY_TIME);
+	printf("\t - [2] SLEEP_TIME: %d\n", SLEEP_TIME);
 	printf("\t - [3] TIME_PER_SCAN: %d\n", TIME_PER_SCAN);
-}
-
-int validate_value(int value){
-	return (value <= 99999) && (value > 0);
 }
