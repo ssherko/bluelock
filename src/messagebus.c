@@ -110,6 +110,31 @@ void bus_send_message(char* message){
 
     dbus_connection_flush(connection);
     dbus_message_unref(unlock_message);
+    pending = NULL;
+
+    // If the screen has been turned off (due to being locked for a 'long' period of time)
+    // issue a call to 'SimulateUserActivity'
+    method = "SimulateUserActivity";
+    DBusMessage* simulate_activity_message;
+
+    simulate_activity_message = dbus_message_new_method_call(destination,object,interface,method);
+    if(simulate_activity_message == NULL){
+      log_event("<bus_send_message>", "Error setting DBus message", ERRO);
+      exit(EXIT_ERR_DBUS_SET_MSG);
+    }
+
+    if(!dbus_connection_send_with_reply(connection, simulate_activity_message, &pending, -1)){
+      log_event("<bus_send_message>", "Error sending DBus message (SimulateUserActivity)", ERRO);
+      exit(EXIT_ERR_DBUS_SND_MSG);
+    }
+
+    if(pending == NULL){
+      log_event("<bus_send_message>", "Pending call set to (NULL)", ERRO);
+      exit(EXIT_ERR_DBUS_PCALL);
+    }
+
+    dbus_connection_flush(connection);
+    dbus_message_unref(simulate_activity_message);
 
   }
 
