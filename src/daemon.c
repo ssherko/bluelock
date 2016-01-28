@@ -101,8 +101,9 @@ void update_lock_status(state_history history, bool* status){
 	for(;i < MAX_HISTORY_LEN; i++){
 		lock = lock + history.locks[i];
 	}
-
-	if(lock >= 1){ 
+	float cutoff = MAX_HISTORY_LEN / 3;
+	
+	if(lock >= cutoff){ 
 		*status = TRUE;
 	}
 

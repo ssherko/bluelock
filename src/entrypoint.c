@@ -257,6 +257,13 @@ int main(int argc, char** argv){
 		return 0;
 	}
 
+	if(args.list_logs){
+		printf("Printing logs.\n");
+		print_logs(LOGS_PATH);
+		printf("Exiting.\n");
+		return 0;
+	}
+
 	key_store* store = fetch_keys();
 	int store_len = get_list_length(store);
 

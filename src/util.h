@@ -21,6 +21,7 @@
 #define EXIT_ERR_OPEN_LOGS 11
 #define EXIT_ERR_OPEN_SETTINGS 12
 #define EXIT_ERR_CREAT_DATAFOLD 13
+#define EXIT_ERR_CREAT_LOGFILE 14
 
 typedef enum { FALSE, TRUE } bool;
 
@@ -31,7 +32,7 @@ typedef struct {
 	bool list_params;
 	bool edit_param;
 	bool disp_help;
-	bool scan;
+	bool list_logs;
 	bool run_daemon;
 } cmd_args;
 
@@ -40,7 +41,6 @@ extern int NR_MAX_DISCOVERED_DEVICES;
 extern int MAX_HISTORY_LEN;
 extern int SLEEP_TIME;
 extern int TIME_PER_SCAN;
-
 
 cmd_args parse_cmd(int argc, char** argv);
 char* check_persistent_data();
@@ -53,4 +53,6 @@ int validate_value(int value);
 void list_params();
 void print_header();
 void print_help();
+void print_logs(char* logs_path);
+
 #endif

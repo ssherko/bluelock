@@ -5,6 +5,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 #include "util.h"
 #include "logger.h"
@@ -26,11 +27,12 @@ cmd_args parse_cmd(int argc,char** argv){
 	args.list_params = FALSE;
 	args.edit_param = FALSE;
 	args.disp_help = FALSE;
+	args.list_logs = FALSE;
 	args.run_daemon = TRUE;
 
 	int c;
 
-	while((c = getopt(argc, argv, "adlseh")) != -1){
+	while((c = getopt(argc, argv, "adkselh")) != -1){
 		switch(c){
 			case 'a':
 				args.add = TRUE;
@@ -40,7 +42,7 @@ cmd_args parse_cmd(int argc,char** argv){
 				args.del = TRUE;
 				break;
 
-			case 'l':
+			case 'k':
 				args.list_keys = TRUE;
 				break;
 
@@ -50,6 +52,10 @@ cmd_args parse_cmd(int argc,char** argv){
 
 			case 'e':
 				args.edit_param = TRUE;
+				break;
+
+			case 'l':
+				args.list_logs = TRUE;
 				break;
 
 			case 'h':
@@ -95,7 +101,17 @@ char* check_persistent_data(){
 	printf("First time run ...\n");
 	printf("Initializing persistent data folder and default settings in '%s'.\n", data_path);
 	persist_settings(data_path);
-	
+
+	//creating log file
+	char log_path[50];
+	strcpy(log_path,data_path);
+	strcat(log_path, "/logs");
+	status = creat(log_path, S_IRWXO | S_IRWXU);
+	if(status == -1){
+		perror("<check_persistent_data> Error creating log file: ");
+		exit(EXIT_ERR_CREAT_LOGFILE);
+	}
+
 	return data_path;
 
 }
@@ -226,12 +242,13 @@ int validate_value(int value){
 *****************************************/
 
 void print_help(){
-	printf("Usage: bluelock [-a][-d][-l][-s][-e][-h]\n");
+	printf("Usage: bluelock [-a][-d][-k][-s][-e][-l][-h]\n");
 	printf("\t-a\t\tAdd a new bluetooth key and exit\n");
 	printf("\t-d\t\tDelete an existing bluetooth key and exit\n");
-	printf("\t-l\t\tList existing bluetooth keys and exit\n");
+	printf("\t-k\t\tList existing bluetooth keys and exit\n");
 	printf("\t-s\t\tList daemon parameters and exit\n");
 	printf("\t-e\t\tEdit daemon parameters and exit\n");
+	printf("\t-l\t\tList logs and exit\n");
 	printf("\t-h\t\tDisplay this message and exit\n");
 	printf("If no arguments are provided, 'bluelock' will run as a daemon\n");
 }
@@ -246,4 +263,28 @@ void list_params(){
 	printf("\t - [1] MAX_HISTORY_LEN: %d\n", MAX_HISTORY_LEN);
 	printf("\t - [2] SLEEP_TIME: %d\n", SLEEP_TIME);
 	printf("\t - [3] TIME_PER_SCAN: %d\n", TIME_PER_SCAN);
+}
+
+void print_logs(char* logs_path){
+	FILE* log_file = fopen(logs_path, "r");
+	if(log_file == NULL){
+		perror("<print_logs> Error opening log file: ");
+		exit(EXIT_ERR_OPEN_LOGS);
+	}
+	int lines = 0;
+	size_t read;
+	size_t length = 0;
+	char* log_string;
+	while((read = getline(&log_string, &length, log_file)) != -1){
+		printf(" - %s", log_string);
+		lines++;
+	}
+
+	fclose(log_file);
+
+	if(lines == 0){
+		printf("\t - No logs to display\n");
+
+	}
+
 }
