@@ -23,6 +23,8 @@
 #define EXIT_ERR_CREAT_DATAFOLD 13
 #define EXIT_ERR_CREAT_LOGFILE 14
 
+#define EXIT_SIG_RECV 0
+
 typedef enum { FALSE, TRUE } bool;
 
 typedef struct {
@@ -54,5 +56,7 @@ void list_params();
 void print_header();
 void print_help();
 void print_logs(char* logs_path);
+
+void signal_handler(int signal_no);
 
 #endif

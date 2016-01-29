@@ -28,7 +28,7 @@ void start_daemon(int time_per_scan, key_store* store){
 
 	bool unlock_status = 1;
 	bool previous_status = 1;
-	while(1){
+	while(TRUE){
 		int found = scan_nearby(NR_MAX_DISCOVERED_DEVICES, TIME_PER_SCAN, nearby);
 		int i;
 		bool status = FALSE;

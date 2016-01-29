@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <signal.h>
 
 #include "util.h"
 #include "entrypoint.h"
@@ -27,6 +28,15 @@ int main(int argc, char** argv){
 	fetch_settings(DATA_PATH);
 	args = parse_cmd(argc, argv);
 	int scanf_status = 0; // annoying scanf warning ... 
+
+	// register our signal handler
+	if(signal(SIGINT, signal_handler) == SIG_ERR){
+		log_event("<main>", "Error setting signal handler for SIGINT. Proceeding.", WARN);
+	}
+	if(signal(SIGTERM, signal_handler) == SIG_ERR){
+		log_event("<main>", "Error setting signal handler for SIGTERM. Proceeding.", WARN);
+	}    
+
 
 	if(args.add){ // The program has been invoked with the -a option (ADD A NEW KEY)
 		

@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #include "util.h"
 #include "logger.h"
@@ -287,4 +288,23 @@ void print_logs(char* logs_path){
 
 	}
 
+}
+
+void signal_handler(int signal_no){
+	switch(signal_no){
+		
+		case SIGINT:
+			log_event("<signal_handler>", "Stopping daemon (SIGINT)", INFO);
+			exit(EXIT_SIG_RECV);
+			break;
+
+		case SIGTERM:
+			log_event("<signal_handler>", "Stopping daemon (SIGTERM)", INFO);
+			exit(EXIT_SIG_RECV);
+			break;
+
+		default:
+			break;
+
+	}
 }
