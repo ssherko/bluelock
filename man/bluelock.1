@@ -1,0 +1,60 @@
+.TH BLUELOCK 1 "JANUARY 2016" Linux "User Manuals"
+.SH NAME
+Bluelock \- Use bluetooth devices as keys to lock/unlock the screen
+.SH SYNOPSIS
+.B bluelock [-a][-d][-k][-s][-e][-l][-h]
+.SH DESCRIPTION
+.B bluelock
+runs as a daemon (if no options are provided) scanning for nearby bluetooth devices.
+It locks the screen if no 
+.I valid 
+bluetooth devices are nearby, unlocking it when said devices are detected.
+A device is considered 
+.I valid
+iff it has been added to the bluelock's key store.
+
+.SH OPTIONS
+.IP -a
+Add a new bluetooth device as a key to the key store
+.IP -d 
+Delete an existing bluetooth key from the key store
+.IP -k
+List existing valid bluetooth keys
+.IP -s
+List current daemon parameters
+.IP -e
+Edit daemon parameters
+.IP -l
+List logs
+.IP -h
+Show help
+
+If no options are provided, 
+.B bluelock
+will run as a daemon. 
+.SH FILES
+.I ~/.bluelock/
+.RS
+The folder where 
+.B bluelock
+persists its data.
+
+.RE
+.I ~/.bluelock/logs
+.RS
+The logs maintained by the program. Invoke 
+.B bluelock -l
+to print its contents.
+
+.RE
+.I ~/.bluelock/keystore
+.RS
+Contains what the daemon considers valid keys.
+
+.RE
+.I ~/.bluelock/settings
+.RS
+Various daemon parameters.
+
+.SH AUTHOR
+Stiv Sherko <stivsherko@gmail.com>

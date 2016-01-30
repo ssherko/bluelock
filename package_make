@@ -27,10 +27,13 @@ clean:
 	@rm missing -f
 	@rm $(OBJ) -f
 	@rm src/bluelock -f
+	@rm man/Makefile man/Makefile.in -f
 	@rm ~/.bluelock -rf
 
 all: before_dist
 	@echo "Configuring and running make..."
 	./configure && make
 
+show_man:
+	@groff -man -Tascii man/bluelock.1
 
