@@ -10,6 +10,7 @@
 #include "devlist_handler.h"
 #include "scanner.h"
 #include "logger.h"
+#include "greet.h"
 
 
 int main(int argc, char** argv){
@@ -22,9 +23,9 @@ int main(int argc, char** argv){
 	KEY_STORE_PATH = (char*)malloc(sizeof(char) * 50);
 	LOGS_PATH = (char*)malloc(sizeof(char) * 50);
 	strcpy(KEY_STORE_PATH,DATA_PATH);
-	strcat(KEY_STORE_PATH, "/keystore");
+	strcat(KEY_STORE_PATH, KEYSTORE_NAME);
 	strcpy(LOGS_PATH, DATA_PATH);
-	strcat(LOGS_PATH, "/logs");
+	strcat(LOGS_PATH, LOGFOLD_NAME);
 	fetch_settings(DATA_PATH);
 	args = parse_cmd(argc, argv);
 	int scanf_status = 0; // annoying scanf warning ... 
@@ -94,6 +95,8 @@ int main(int argc, char** argv){
 		str2ba(to_add.addr, &(key.addr));
 
 		int status = register_key(&key);
+		create_greeting(to_add.addr, username);
+
 		if(status == 0){
 			printf("Device [%d] with ID(%s) and ADDR(%s) already exists.\n",choice,to_add.name,to_add.addr);
 			printf("Exiting.\n");

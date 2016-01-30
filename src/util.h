@@ -22,8 +22,15 @@
 #define EXIT_ERR_OPEN_SETTINGS 12
 #define EXIT_ERR_CREAT_DATAFOLD 13
 #define EXIT_ERR_CREAT_LOGFILE 14
+#define EXIT_ERR_CREAT_GREETFOLD 15
 
 #define EXIT_SIG_RECV 0
+
+#define LOGFOLD_NAME "/logs"
+#define SETTINGSFOLD_NAME "/settings"
+#define GREETFOLD_NAME "/greetings"
+#define BLUELOCKFOLD_NAME "/.bluelock"
+#define KEYSTORE_NAME "/keystore"
 
 typedef enum { FALSE, TRUE } bool;
 

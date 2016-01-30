@@ -8,4 +8,5 @@ bluelock_SOURCES = daemon.c daemon.h\
 				   logger.c logger.h \
 				   messagebus.c messagebus.h\
 				   scanner.c scanner.h\
-				   util.c util.h
+				   util.c util.h\
+				   greet.c greet.h

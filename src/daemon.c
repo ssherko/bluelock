@@ -12,6 +12,7 @@
 #include "scanner.h"
 #include "messagebus.h"
 #include "logger.h"
+#include "greet.h"
 #include "util.h"
 
 /*
@@ -127,8 +128,6 @@ bool execute_status(bool lock_status, bool previous_status, key_device_t* key){
 	if(lock_status == FALSE){
 		bus_send_message("LOCK"); // log after check.
 		log_event("<execute_status>","Locked screen, no valid keys nearby",INFO);
-
-		
 	}else{
 		bus_send_message("UNLOCK"); // same here
 		char* user = key -> user;
@@ -138,6 +137,13 @@ bool execute_status(bool lock_status, bool previous_status, key_device_t* key){
 		strcat(msg,")");
 
 		log_event("<execute_status>",msg,INFO);
+		
+		if(GREET_USER){
+			char greet_id[18];
+			ba2str(&(key->addr),greet_id);
+			play_greeting(greet_id);
+		}
+		
 		free(msg);
 	}
 	return lock_status;

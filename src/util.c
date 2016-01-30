@@ -88,7 +88,7 @@ char* check_persistent_data(){
 
 	char* home_path = getenv("HOME");
 	strcpy(data_path, home_path);
-	strcat(data_path,"/.bluelock");
+	strcat(data_path,BLUELOCKFOLD_NAME);
 
 	int status = mkdir(data_path, S_IRWXO | S_IRWXU);
 	
@@ -106,11 +106,21 @@ char* check_persistent_data(){
 	//creating log file
 	char log_path[50];
 	strcpy(log_path,data_path);
-	strcat(log_path, "/logs");
+	strcat(log_path, LOGFOLD_NAME);
 	status = creat(log_path, S_IRWXO | S_IRWXU);
 	if(status == -1){
 		perror("<check_persistent_data> Error creating log file: ");
 		exit(EXIT_ERR_CREAT_LOGFILE);
+	}
+
+	//create greeting subfolder
+	char greeting_folder[50];
+	strcpy(greeting_folder, data_path);
+	strcat(greeting_folder,GREETFOLD_NAME);
+	status = mkdir(greeting_folder, S_IRWXO | S_IRWXU);
+	if(status == -1){
+		perror("<check_persistent_data> Error creating greetings folder: ");
+		exit(EXIT_ERR_CREAT_GREETFOLD);
 	}
 
 	return data_path;
@@ -132,7 +142,7 @@ void persist_settings(char* data_path){
 		exit(EXIT_ERR_ALLOC_MEM);
 	}
 	strcpy(settings_path, data_path);
-	strcat(settings_path, "/settings");
+	strcat(settings_path, SETTINGSFOLD_NAME);
 	
 	FILE* settings_file = fopen(settings_path, "w");
 	if(settings_file == NULL){
@@ -191,7 +201,7 @@ void fetch_settings(char* data_path){
 		exit(EXIT_ERR_ALLOC_MEM);
 	}
 	strcpy(settings_path, data_path);
-	strcat(settings_path, "/settings");
+	strcat(settings_path, SETTINGSFOLD_NAME);
 
 	FILE* settings_file = fopen(settings_path, "r");
 	if(settings_file == NULL){

@@ -33,6 +33,8 @@ int TIME_PER_SCAN = 2;
 // scanning for nearby keys again.
 int SLEEP_TIME = 1;
 
+// 
+int GREET_USER = 1;
 
 /****************************************
 *     PERSISTING-DATA ABSOLUTE PATHS    *

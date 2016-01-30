@@ -46,7 +46,7 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_bluelock_OBJECTS = daemon.$(OBJEXT) devlist_handler.$(OBJEXT) \
 	entrypoint.$(OBJEXT) logger.$(OBJEXT) messagebus.$(OBJEXT) \
-	scanner.$(OBJEXT) util.$(OBJEXT)
+	scanner.$(OBJEXT) util.$(OBJEXT) greet.$(OBJEXT)
 bluelock_OBJECTS = $(am_bluelock_OBJECTS)
 bluelock_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -161,7 +161,8 @@ bluelock_SOURCES = daemon.c daemon.h\
 				   logger.c logger.h \
 				   messagebus.c messagebus.h\
 				   scanner.c scanner.h\
-				   util.c util.h
+				   util.c util.h\
+				   greet.c greet.h
 
 all: all-am
 
@@ -247,6 +248,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/daemon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/devlist_handler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/entrypoint.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/greet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messagebus.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scanner.Po@am__quote@
