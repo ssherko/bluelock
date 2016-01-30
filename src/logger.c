@@ -51,13 +51,16 @@ void log_event(char* function_name, char* message_body,int level){
 
 	strcat(event_str, " ");
 	strcat(event_str, level_str);
-	strcat(event_str, ": ");
+	strcat(event_str, " ");
 
 	strcat(event_str, function_name);
 	strcat(event_str, " ");
 	strcat(event_str, message_body);
-	strcat(event_str, " ");
-	strcat(event_str, additional);
+	
+	if(level == ERRO){
+		strcat(event_str, ": ");
+		strcat(event_str, additional);
+	}
 
 	fprintf(log_file,"%s\n", event_str);
 	
