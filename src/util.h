@@ -50,13 +50,14 @@ extern int NR_MAX_DISCOVERED_DEVICES;
 extern int MAX_HISTORY_LEN;
 extern int SLEEP_TIME;
 extern int TIME_PER_SCAN;
+extern int GREET_USER;
 
 cmd_args parse_cmd(int argc, char** argv);
 char* check_persistent_data();
 void persist_settings(char* data_path);
 int get_parameter_value(char* variable_string);
 void fetch_settings(char* data_path);
-int validate_value(int value);
+int validate_value(int value, int which_param);
 
 //Printing functions.
 void list_params();

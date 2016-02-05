@@ -61,7 +61,7 @@ int main(int argc, char** argv){
 		scanf_status = scanf("%d",&choice);
 
 		if(scanf_status == 0){
-			log_event("<main>", "No user input",WARN);
+			log_event("<main>", "No valid user input",WARN);
 			return 0;
 		}
 
@@ -82,7 +82,7 @@ int main(int argc, char** argv){
 		scanf_status = scanf("%s",&username[0]);
 
 		if(scanf_status == 0){
-			log_event("<main>", "No user input",WARN);
+			log_event("<main>", "No valid user input",WARN);
 			return 0;
 		}
 
@@ -134,7 +134,7 @@ int main(int argc, char** argv){
 		scanf_status = scanf("%d",&choice);
 
 		if(scanf_status == 0){
-			log_event("<main>", "No user input",WARN);
+			log_event("<main>", "No valid user input",WARN);
 			return 0;
 		}
 		
@@ -203,7 +203,7 @@ int main(int argc, char** argv){
 		scanf_status = scanf("%d",&choice);
 
 		if(scanf_status == 0){
-			log_event("<main>", "No user input",WARN);
+			log_event("<main>", "No valid user input",WARN);
 			return 0;
 		}
 		
@@ -213,7 +213,7 @@ int main(int argc, char** argv){
 			return 0;
 		}
 
-		if(choice > 3){
+		if(choice > 4){
 			printf("Invalid [<id>].\n");
 			printf("Exiting.\n");
 			return 0;
@@ -239,19 +239,26 @@ int main(int argc, char** argv){
 				scanf_status = scanf("%d",&new_value);
 				SLEEP_TIME = new_value;
 				break;
+			
 			case 3:
 				printf("Editing 'TIME_PER_SCAN'. Enter new value: ");
 				scanf_status = scanf("%d",&new_value);
 				TIME_PER_SCAN = new_value;
 				break;
+
+			case 4:
+				printf("Editing 'GREET_USER' (0 -> False). Enter new value: ");
+				scanf_status = scanf("%d",&new_value);
+				GREET_USER = new_value;
+				break;
 		}
 
 		if(scanf_status == 0){
-			log_event("<main>", "No user input",WARN);
+			log_event("<main>", "No valid user input",WARN);
 			return 0;
 		}
 		
-		if(validate_value(new_value)){
+		if(validate_value(new_value, choice)){
 			persist_settings(DATA_PATH);
 			printf("Successfully modified daemon parameters.\n");
 			list_params();

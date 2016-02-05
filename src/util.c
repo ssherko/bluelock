@@ -154,6 +154,7 @@ void persist_settings(char* data_path){
 	fprintf(settings_file, "%s=%d\n", "MAX_HISTORY_LEN", MAX_HISTORY_LEN);
 	fprintf(settings_file, "%s=%d\n", "SLEEP_TIME", SLEEP_TIME);
 	fprintf(settings_file, "%s=%d\n", "TIME_PER_SCAN", TIME_PER_SCAN);
+	fprintf(settings_file, "%s=%d\n", "GREET_USER", GREET_USER);
 
 	fclose(settings_file);
 	free(settings_path);
@@ -230,6 +231,10 @@ void fetch_settings(char* data_path){
 				TIME_PER_SCAN = value;
 				break;
 
+			case 'G':
+				GREET_USER = value;
+				break;
+
 			default:
 				log_event("<fetch_settings>", "Unkown setting in settings file",WARN);
 				break;
@@ -244,8 +249,16 @@ void fetch_settings(char* data_path){
 Validates the new value that a user is trying to assign to any of the 
 daemon parameters.
 */
-int validate_value(int value){
-	return (value <= 99999) && (value > 0);
+int validate_value(int value, int which_param){
+	switch(which_param){
+		case 4: // GREET_USER
+			return 1;
+
+		default:
+			return (value <= 99999) && (value > 0);
+
+	}
+	return 0;
 }
 
 /****************************************
@@ -274,6 +287,12 @@ void list_params(){
 	printf("\t - [1] MAX_HISTORY_LEN: %d\n", MAX_HISTORY_LEN);
 	printf("\t - [2] SLEEP_TIME: %d\n", SLEEP_TIME);
 	printf("\t - [3] TIME_PER_SCAN: %d\n", TIME_PER_SCAN);
+	printf("\t - [4] GREET_USER: ");
+	if(GREET_USER){
+		printf("True\n");
+	}else{
+		printf("False\n");
+	}
 }
 
 void print_logs(char* logs_path){
