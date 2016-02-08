@@ -14,12 +14,13 @@
 #define TTS_ENGINE "pico2wave " // Don't remove the whitespace
 #define ENGINE_ARG "-w "
 #define PLAYB_ENGINE "aplay "
+#define SUPPRESS " 2> /dev/null"
 
 extern char* DATA_PATH;
 extern int GREET_USER;
 
-bool create_greeting(char* greet_id, char* username);
-bool delete_greeting(char* greet_id);
+void create_greeting(char* greet_id, char* username);
+void delete_greeting(char* greet_id);
 void play_greeting(char* greet_id);
 
 #endif

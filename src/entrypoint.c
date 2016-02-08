@@ -166,6 +166,9 @@ int main(int argc, char** argv){
 		}
 		
 		printf("Deleted key (%s) from the keystore.\n",serialize_key(to_delete->key));
+		char greet_id[18];
+		ba2str(&(to_delete->key->addr),greet_id);
+		delete_greeting(greet_id);
 
 		char* log_msg = (char*)malloc(sizeof(char)*100);
 		strcpy(log_msg, "Deleted device belonging to '");

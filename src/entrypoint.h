@@ -34,7 +34,7 @@ int TIME_PER_SCAN = 2;
 int SLEEP_TIME = 1;
 
 // Play an audio clip each time the machine is unlocked due to a device being nearby
-int GREET_USER = 1;
+int GREET_USER = 0;
 
 /****************************************
 *     PERSISTING-DATA ABSOLUTE PATHS    *
