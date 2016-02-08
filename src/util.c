@@ -278,7 +278,7 @@ void print_help(){
 }
 
 void print_header(){
-	printf("Bluelock 2016 - Use bluetooth devices as keys.\n");
+	printf("Bluelock 2016 (v%s) - Use bluetooth devices as keys.\n", VERSION_STR);
 }
 
 void list_params(){
@@ -288,11 +288,13 @@ void list_params(){
 	printf("\t - [2] SLEEP_TIME: %d\n", SLEEP_TIME);
 	printf("\t - [3] TIME_PER_SCAN: %d\n", TIME_PER_SCAN);
 	printf("\t - [4] GREET_USER: ");
+	
 	if(GREET_USER){
 		printf("True\n");
 	}else{
 		printf("False\n");
 	}
+
 }
 
 void print_logs(char* logs_path){
@@ -323,12 +325,12 @@ void signal_handler(int signal_no){
 	switch(signal_no){
 		
 		case SIGINT:
-			log_event("<signal_handler>", "Stopping daemon (SIGINT)", INFO);
+			log_event("<signal_handler>", "Stopping daemon (SIGINT received)", INFO);
 			exit(EXIT_SIG_RECV);
 			break;
 
 		case SIGTERM:
-			log_event("<signal_handler>", "Stopping daemon (SIGTERM)", INFO);
+			log_event("<signal_handler>", "Stopping daemon (SIGTERM received)", INFO);
 			exit(EXIT_SIG_RECV);
 			break;
 

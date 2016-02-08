@@ -31,6 +31,7 @@
 #define GREETFOLD_NAME "/greetings"
 #define BLUELOCKFOLD_NAME "/.bluelock"
 #define KEYSTORE_NAME "/keystore"
+#define VERSION_STR "0.1.0"
 
 typedef enum { FALSE, TRUE } bool;
 
