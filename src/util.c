@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <stdarg.h>
 
 #include "util.h"
 #include "logger.h"
@@ -338,4 +339,21 @@ void signal_handler(int signal_no){
 			break;
 
 	}
+}
+
+void strcat_mult_str(char* dst, char* src1, ...){
+	va_list string_list;
+
+	strcpy(dst,src1);
+	va_start(string_list, src1);
+	
+	char* next_str;
+	while(TRUE){
+		next_str = va_arg(string_list, char*);
+		if(!next_str)
+			break;
+		strcat(dst,next_str);
+	}
+
+	va_end(string_list);
 }
