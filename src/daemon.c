@@ -27,8 +27,8 @@ void start_daemon(int time_per_scan, key_store* store){
 	state_history history;
 	init_history(&history);
 
-	bool unlock_status = 1;
-	bool previous_status = 1;
+	bool unlock_status = TRUE;
+	bool previous_status = TRUE;
 	while(TRUE){
 		int found = scan_nearby(NR_MAX_DISCOVERED_DEVICES, TIME_PER_SCAN, nearby);
 		int i;
@@ -42,7 +42,7 @@ void start_daemon(int time_per_scan, key_store* store){
 			str2ba(dev.addr, &(current->addr));
 			int pos = -1;
 			if((pos = check_existence(store,current)) >= 0){
-				status = 1;
+				status = TRUE;
 				update_key(store, pos);
 				found_device = fetch_key(store,pos);
 				break;
@@ -53,12 +53,11 @@ void start_daemon(int time_per_scan, key_store* store){
 		update_lock_status(history,&unlock_status);
 		previous_status = execute_status(unlock_status,previous_status, found_device);
 		
-		if(unlock_status == 1){
+		if(unlock_status == TRUE){
 			usleep(SLEEP_TIME*1000);
 			continue;
 		}
 		usleep(250);
-
 	}
 }
 
@@ -132,10 +131,8 @@ bool execute_status(bool lock_status, bool previous_status, key_device_t* key){
 		bus_send_message("UNLOCK"); // same here
 		char* user = key -> user;
 		char* msg = (char*)malloc(sizeof(char) * (USR_LEN + 50));
-		strcpy(msg,"Unlocked screen, valid key nearby (");
-		strcat(msg,user);
-		strcat(msg,")");
-
+		strcat_mult_str(6,msg,"Unlocked screen, valid key nearby (",user,")");
+		
 		log_event("<execute_status>",msg,INFO);
 		
 		if(GREET_USER){

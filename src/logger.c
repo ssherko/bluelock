@@ -21,7 +21,6 @@ to be logged, together with the message body.
 */
 void log_event(char* function_name, char* message_body,int level){
 	FILE* log_file = fopen(LOGS_PATH, "a");
-	
 	if(log_file == NULL){
 		perror("<log_event> couldn't open log file: "); // log_event("log_event", "Couldn't open log file",ERRO);// what could go wrong ?
 		exit(EXIT_ERR_OPEN_LOGS);

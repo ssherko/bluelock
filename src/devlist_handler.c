@@ -38,24 +38,10 @@ char* serialize_key( key_device_t* key ){
 	local_time_l = localtime(&(key->last_seen));
 	strftime(last_seen, sizeof(last_seen) , DATE_FORMAT, local_time_l);
 
-	strcpy(result,key->device_id);
-	strcat(result, ": { ");
-
-	strcat(result,key->user);
-	strcat(result,", A:");
-
-
-	strcat(result, added_time);
-	strcat(result, ", L:");
-
-	strcat(result,last_seen);
-	strcat(result, ", ");
-
 	char mac_addr[MAC_LEN];
 	ba2str(&(key->addr),mac_addr);
-	strcat(result, mac_addr);
 
-	strcat(result, " }");
+	strcat_mult_str(12,result, key->device_id, ": { ", key->user, ", A:", added_time, ", L:", last_seen, ", ", mac_addr, " }");
 	
 	return result;
 } 
@@ -225,7 +211,7 @@ void persist_keys(key_store* store){
 		exit(EXIT_ERR_OPEN_KEYSTORE);
 	}
 
-	fwrite(store, 0,0 , key_file); // reset file
+	fwrite(store, 0,0 , key_file); // 'reset' file
 
 	if(store == NULL){
 		fclose(key_file);

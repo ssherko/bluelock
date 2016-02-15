@@ -8,8 +8,6 @@
 
 void create_greeting(char* greet_id, char* username){
 	char greetfile_path[100];
-	strcpy(greetfile_path, DATA_PATH);
-	strcat(greetfile_path, GREETFOLD_NAME);
 	char greetfile_id[18];
 	int i = 0;
 
@@ -21,21 +19,12 @@ void create_greeting(char* greet_id, char* username){
 
 		greetfile_id[i] = greet_id[i];
 	}
-	strcat(greetfile_path, "/");
-	strcat(greetfile_path, greetfile_id);
-	strcat(greetfile_path, ".wav");
 
+	strcat_mult_str(7, greetfile_path, DATA_PATH, GREETFOLD_NAME, "/", greetfile_id, ".wav");
 	int status;
 
 	char command[150];
-	strcpy(command, TTS_ENGINE);
-	strcat(command, ENGINE_ARG);
-	strcat(command, greetfile_path);
-	strcat(command, " \"Hello , ");
-	strcat(command, username);
-	strcat(command, "\"");
-	strcat(command, SUPPRESS);
-
+	strcat_mult_str(9, command, TTS_ENGINE, ENGINE_ARG, greetfile_path, " \"Hello ", username, "\"", SUPPRESS);
 	status = system(command);
 
 	if(status < 0){
@@ -49,8 +38,6 @@ void create_greeting(char* greet_id, char* username){
 
 void delete_greeting(char* greet_id){
 	char greetfile_path[100];
-	strcpy(greetfile_path, DATA_PATH);
-	strcat(greetfile_path, GREETFOLD_NAME);
 	char greetfile_id[18];
 	int i = 0;
 
@@ -62,10 +49,8 @@ void delete_greeting(char* greet_id){
 
 		greetfile_id[i] = greet_id[i];
 	}
-	strcat(greetfile_path, "/");
-	strcat(greetfile_path, greetfile_id);
-	strcat(greetfile_path, ".wav");
-
+	
+	strcat_mult_str(7, greetfile_path, DATA_PATH, GREETFOLD_NAME, "/", greetfile_id, ".wav");
 	int status = remove(greetfile_path);
 
 	if(status < 0){
@@ -76,8 +61,6 @@ void delete_greeting(char* greet_id){
 
 void play_greeting(char* greet_id){
 	char greetfile_path[100];
-	strcpy(greetfile_path, DATA_PATH);
-	strcat(greetfile_path, GREETFOLD_NAME);
 	char greetfile_id[18];
 	int i = 0;
 
@@ -89,17 +72,12 @@ void play_greeting(char* greet_id){
 
 		greetfile_id[i] = greet_id[i];
 	}
-	strcat(greetfile_path, "/");
-	strcat(greetfile_path, greetfile_id);
-	strcat(greetfile_path, ".wav");
 
+	strcat_mult_str(7, greetfile_path, DATA_PATH, GREETFOLD_NAME, "/", greetfile_id, ".wav");
 	int status;
 
 	char command[150];
-	strcpy(command, PLAYB_ENGINE);
-	strcat(command, greetfile_path);
-	strcat(command, SUPPRESS);
-
+	strcat_mult_str(5, command, PLAYB_ENGINE, greetfile_path, SUPPRESS);
 	status = system(command);
 
 	if(status < 0){

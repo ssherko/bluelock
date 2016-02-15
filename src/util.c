@@ -88,8 +88,7 @@ char* check_persistent_data(){
 	}
 
 	char* home_path = getenv("HOME");
-	strcpy(data_path, home_path);
-	strcat(data_path,BLUELOCKFOLD_NAME);
+	strcat_mult_str(4,data_path, home_path, BLUELOCKFOLD_NAME);
 
 	int status = mkdir(data_path, S_IRWXO | S_IRWXU);
 	
@@ -106,9 +105,9 @@ char* check_persistent_data(){
 
 	//creating log file
 	char log_path[50];
-	strcpy(log_path,data_path);
-	strcat(log_path, LOGFOLD_NAME);
+	strcat_mult_str(4, log_path, data_path, LOGFOLD_NAME);
 	status = creat(log_path, S_IRWXO | S_IRWXU);
+
 	if(status == -1){
 		perror("<check_persistent_data> Error creating log file: ");
 		exit(EXIT_ERR_CREAT_LOGFILE);
@@ -116,9 +115,9 @@ char* check_persistent_data(){
 
 	//create greeting subfolder
 	char greeting_folder[50];
-	strcpy(greeting_folder, data_path);
-	strcat(greeting_folder,GREETFOLD_NAME);
+	strcat_mult_str(4, greeting_folder, data_path, GREETFOLD_NAME);
 	status = mkdir(greeting_folder, S_IRWXO | S_IRWXU);
+
 	if(status == -1){
 		perror("<check_persistent_data> Error creating greetings folder: ");
 		exit(EXIT_ERR_CREAT_GREETFOLD);
@@ -142,10 +141,10 @@ void persist_settings(char* data_path){
 		log_event("<persist_settings>", "Error allocating memory",ERRO);
 		exit(EXIT_ERR_ALLOC_MEM);
 	}
-	strcpy(settings_path, data_path);
-	strcat(settings_path, SETTINGSFOLD_NAME);
 	
+	strcat_mult_str(4, settings_path, data_path, SETTINGSFOLD_NAME);
 	FILE* settings_file = fopen(settings_path, "w");
+
 	if(settings_file == NULL){
 		log_event("<persist_settings>", "Error opening settings file", ERRO);
 		exit(EXIT_ERR_OPEN_SETTINGS);
@@ -202,10 +201,9 @@ void fetch_settings(char* data_path){
 		log_event("<fetch_settings>", "Error allocating memory",ERRO);
 		exit(EXIT_ERR_ALLOC_MEM);
 	}
-	strcpy(settings_path, data_path);
-	strcat(settings_path, SETTINGSFOLD_NAME);
-
+	strcat_mult_str(4, settings_path, data_path, SETTINGSFOLD_NAME);
 	FILE* settings_file = fopen(settings_path, "r");
+	
 	if(settings_file == NULL){
 		log_event("<fetch_settings>", "Error opening settings file", ERRO);
 		exit(EXIT_ERR_OPEN_SETTINGS); // document this
@@ -322,6 +320,10 @@ void print_logs(char* logs_path){
 
 }
 
+/****************************************
+*              MISCELLANEOUS            *
+*****************************************/
+
 void signal_handler(int signal_no){
 	switch(signal_no){
 		
@@ -341,18 +343,21 @@ void signal_handler(int signal_no){
 	}
 }
 
-void strcat_mult_str(char* dst, char* src1, ...){
+void strcat_mult_str(int argc, char* dst, char* src1, ...){
 	va_list string_list;
 
 	strcpy(dst,src1);
 	va_start(string_list, src1);
 	
 	char* next_str;
-	while(TRUE){
+	int i;
+
+	for(i = 3; i < argc; i++){ // 'argc' = 0, 'dst' = 1, 'src' = 2 hence 'i' starts from 3
 		next_str = va_arg(string_list, char*);
 		if(!next_str)
 			break;
 		strcat(dst,next_str);
+
 	}
 
 	va_end(string_list);

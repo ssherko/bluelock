@@ -25,8 +25,8 @@ int scan_nearby(int max_devices, int inquiry_length, discovered_dev_t* nearby){
 
 	int adapter_id = hci_get_route(NULL);
 	if(adapter_id < 0){
-		log_event("<scan_nearby>", "Error accessing bluetooth device", ERRO);
-		exit(EXIT_ERR_OPEN_BT_DEV);
+		log_event("<scan_nearby>", "Cannot access bluetooth device (maybe off?)", WARN);
+		return -1;
 	}
 
 	int socket = hci_open_dev(adapter_id);
@@ -89,9 +89,7 @@ Returns a string representation of a discovered device.
 */
 char* disc_dev2str(discovered_dev_t* dev){
 	char* result = (char*)malloc(sizeof(dev->addr) + sizeof(dev->name) + 2);
-	strcpy(result, dev->name);
-	strcat(result, ", ");
-	strcat(result,dev->addr);
+	strcat_mult_str(5,result, dev->name, ", ", dev->addr);
 
 	return result;
 }

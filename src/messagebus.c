@@ -112,7 +112,7 @@ void bus_send_message(char* message){
     dbus_message_unref(unlock_message);
     pending = NULL;
 
-    // If the screen has been turned off (due to being locked for a 'long' period of time)
+    // If the screen has been turned off (due to being locked for a long period of time)
     // issue a call to 'SimulateUserActivity'
     method = "SimulateUserActivity";
     DBusMessage* simulate_activity_message;

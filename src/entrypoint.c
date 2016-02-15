@@ -22,10 +22,10 @@ int main(int argc, char** argv){
 	DATA_PATH = check_persistent_data(); // defined in entrypoint.h
 	KEY_STORE_PATH = (char*)malloc(sizeof(char) * 50);
 	LOGS_PATH = (char*)malloc(sizeof(char) * 50);
-	strcpy(KEY_STORE_PATH,DATA_PATH);
-	strcat(KEY_STORE_PATH, KEYSTORE_NAME);
-	strcpy(LOGS_PATH, DATA_PATH);
-	strcat(LOGS_PATH, LOGFOLD_NAME);
+	
+	strcat_mult_str(4, KEY_STORE_PATH, DATA_PATH, KEYSTORE_NAME);
+	strcat_mult_str(4, LOGS_PATH, DATA_PATH, LOGFOLD_NAME);
+	
 	fetch_settings(DATA_PATH);
 	args = parse_cmd(argc, argv);
 	int scanf_status = 0; // annoying scanf warning ... 
@@ -44,11 +44,18 @@ int main(int argc, char** argv){
 		printf("Scanning for nearby devices. Please wait ... \n");
 		discovered_dev_t* nearby = (discovered_dev_t*)malloc(sizeof(discovered_dev_t)*NR_MAX_DISCOVERED_DEVICES);
 		int found = scan_nearby(NR_MAX_DISCOVERED_DEVICES, TIME_PER_SCAN, nearby);
-		if(found < 1){
+		if(found == 0){
 			printf("No nearby devices found.\n");
 			printf("Exiting.\n");
 			return 0;
 		}
+
+		if(found == -1){
+			printf("Cannot open bluetooth device. Check logs.\n");
+			printf("Exiting.\n");
+			return 0;
+		}
+
 
 		printf("Found devices: %d\n", found);
 		int i;
@@ -108,9 +115,7 @@ int main(int argc, char** argv){
 		printf("Exiting.\n");
 
 		char* log_msg = (char*)malloc(sizeof(char)*100);
-		strcpy(log_msg, "Added new key device, belonging to '");
-		strcat(log_msg, username);
-		strcat(log_msg,"'");
+		strcat_mult_str(5,log_msg, "Added new key device, belonging to '", username, "'");
 
 		log_event("<main>", log_msg, INFO);
 		free(log_msg);
@@ -171,10 +176,7 @@ int main(int argc, char** argv){
 		delete_greeting(greet_id);
 
 		char* log_msg = (char*)malloc(sizeof(char)*100);
-		strcpy(log_msg, "Deleted device belonging to '");
-		strcat(log_msg, to_delete->key->user);
-		strcat(log_msg,"'");
-
+		strcat_mult_str(5, log_msg, "Deleted device belonging to '", to_delete->key->user,"'");
 		log_event("<main>", log_msg, INFO);
 		free(log_msg);
 
