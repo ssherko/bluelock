@@ -6,6 +6,13 @@
 #include "greet.h"
 #include "logger.h"
 
+/*
+Creates an audio snippet with the name of the user of
+the bluetooth key device.
+
+@param greet_id String representing the MAC address of the device, in "XX:XX:...:XX" format
+@param username String representing the name of the user of the key device
+*/
 void create_greeting(char* greet_id, char* username){
 	char greetfile_path[100];
 	char greetfile_id[18];
@@ -36,6 +43,11 @@ void create_greeting(char* greet_id, char* username){
 
 }
 
+/*
+Removes the audio file from the persistent data folder
+
+@param greet_id String representing the MAC address of the device, in "XX:XX:...:XX" format
+*/
 void delete_greeting(char* greet_id){
 	char greetfile_path[100];
 	char greetfile_id[18];
@@ -59,6 +71,11 @@ void delete_greeting(char* greet_id){
 
 }
 
+/*
+Plays the audio file with the predefined playback engine
+
+@param greet_id String representing the MAC address of the device, in "XX:XX:...:XX" format
+*/
 void play_greeting(char* greet_id){
 	char greetfile_path[100];
 	char greetfile_id[18];

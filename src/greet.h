@@ -1,9 +1,9 @@
 /*
 	
-	'greet' is responsible for creating/maintaining greetings for 
-	users
-	
+	'greet' is responsible for creating/maintaining audio greetings for 
+	users. It uses the pico2wave program to generate the file.
 
+	
 */
 
 #ifndef GREET_H

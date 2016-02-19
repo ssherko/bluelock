@@ -16,7 +16,6 @@
 int main(int argc, char** argv){
 
 	print_header();
-	
 	// Init stuff.
 	cmd_args args;
 	DATA_PATH = check_persistent_data(); // defined in entrypoint.h
@@ -254,7 +253,7 @@ int main(int argc, char** argv){
 			case 4:
 				printf("Editing 'GREET_USER' (0 -> False). Enter new value: ");
 				scanf_status = scanf("%d",&new_value);
-				GREET_USER = new_value;
+				GREET_USER = new_value && 1;
 				break;
 		}
 

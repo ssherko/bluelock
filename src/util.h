@@ -66,6 +66,7 @@ void print_header();
 void print_help();
 void print_logs(char* logs_path);
 
+//Other.
 void signal_handler(int signal_no);
 void strcat_mult_str(int argc, char* dst, char* src1, ...);
 
